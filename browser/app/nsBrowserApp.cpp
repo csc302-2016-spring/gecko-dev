@@ -208,7 +208,7 @@ static int do_main(int argc, char* argv[], nsIFile *xreDirectory)
   SetStrongPtr(appData.directory, static_cast<nsIFile*>(appSubdir.get()));
   // xreDirectory already has a refcount from NS_NewLocalFile
   appData.xreDirectory = xreDirectory;
-
+  printf("hello Matthew Mcwaters");
   return XRE_main(argc, argv, &appData, mainFlags);
 }
 
