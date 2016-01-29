@@ -180,6 +180,7 @@ static int do_main(int argc, char* argv[])
 
 int main(int argc, _CONST char* argv[])
 {
+
 #ifndef MOZ_B2G_LOADER
   char exePath[MAXPATHLEN];
 #endif
