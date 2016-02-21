@@ -343,7 +343,16 @@ function openModalWindow(domWin, uri, args) {
         let winUtils = domWin.QueryInterface(Ci.nsIInterfaceRequestor)
                              .getInterface(Ci.nsIDOMWindowUtils);
 
-        if (winUtils && !winUtils.isParentWindowMainWidgetVisible) {
+        var condition = false;
+        try{
+          // prevent cases where accessing isParentWindowMainWidgetVisible
+          // is not available (happens when called from extension)
+          condition = winUtils && !winUtils.isParentWindowMainWidgetVisible
+        }catch(e){
+          domWin = Services.ww.activeWindow;
+        }
+        
+        if (condition) {
             throw Components.Exception("Cannot call openModalWindow on a hidden window",
                                        Cr.NS_ERROR_NOT_AVAILABLE);
         }
