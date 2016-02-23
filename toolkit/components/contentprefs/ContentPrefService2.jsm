@@ -844,7 +844,7 @@ ContentPrefService2.prototype = {
       return this;
     if (iid.equals(Ci.nsIContentPrefService))
       return this._cps;
-    throw Cr.NS_ERROR_NO_INTERFACE;
+      throw new Components.Exception("No Interface Error.", Cr.NS_ERROR_NO_INTERFACE);
   },
 };
 

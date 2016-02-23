@@ -1,0 +1,1 @@
+Bug 1064821 - Updated throw statements in contentprefs/ as found in https://dxr.mozilla.org/mozilla-central/search?q=%22throw+%22+path%3Atoolkit%2Fcomponents%2Fcontentprefs&redirect=false&case=true. All exceptions now throw valid exception objects.

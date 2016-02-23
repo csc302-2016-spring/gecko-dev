@@ -69,7 +69,9 @@ ContentPrefService.prototype = {
       }
       return this._contentPrefService2;
     }
-    throw Cr.NS_ERROR_NO_INTERFACE;
+    throw new Components.Exception("No Interface Error.", Cr.NS_ERROR_NO_INTERFACE);
+
+
   },
 
   //**************************************************************************//

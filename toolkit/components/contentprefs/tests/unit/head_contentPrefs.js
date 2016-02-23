@@ -51,7 +51,7 @@ var ContentPrefTest = {
 
   QueryInterface: function ContentPrefTest_QueryInterface(iid) {
     if (!this.interfaces.some( function(v) { return iid.equals(v) } ))
-      throw Cr.NS_ERROR_NO_INTERFACE;
+      throw new Components.Exception("No Interface Error.", Cr.NS_ERROR_NO_INTERFACE);
     return this;
   },
 
@@ -68,7 +68,8 @@ var ContentPrefTest = {
     // This causes extraneous errors to show up in the log when the directory
     // service asks us first for CurProcD and MozBinD.  I wish there was a way
     // to suppress those errors.
-    throw Cr.NS_ERROR_FAILURE;
+    throw new Components.Exception("Failure Error.", Cr.NS_ERROR_FAILURE);
+
   },
 
 
