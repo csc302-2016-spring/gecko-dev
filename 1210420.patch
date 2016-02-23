@@ -1,0 +1,19 @@
+# HG changeset patch
+# User Rathusshan K <rathu.kugan@gmail.com>
+
+Bug 1210420 - Added theme-toolbar-background bg colour to netmonitor reload button
+
+
+diff --git a/devtools/client/themes/netmonitor.css b/devtools/client/themes/netmonitor.css
+index d114f59..7fa437f 100644
+--- a/devtools/client/themes/netmonitor.css
++++ b/devtools/client/themes/netmonitor.css
+@@ -36,6 +36,7 @@
+ #requests-menu-reload-notice-button {
+   min-height: 26px;
+   margin: 0;
++  background-color: var(--theme-toolbar-background);
+ }
+ 
+ /* Network requests table */
+
