@@ -1,0 +1,19 @@
+commit 6ee21f2bd3988c683b84178b063b0763e945087b
+Author: Kai Chun Shih <kaichun.shih@utoronto.ca>
+Date:   Wed Feb 24 00:19:25 2016 -0500
+
+    Increase the window width by 2 em
+
+diff --git a/browser/locales/en-US/chrome/browser/preferences/blocklists.dtd b/browser/locales/en-US/chrome/browser/preferences/blocklists.dtd
+index 837123a..1f04ad7 100644
+--- a/browser/locales/en-US/chrome/browser/preferences/blocklists.dtd
++++ b/browser/locales/en-US/chrome/browser/preferences/blocklists.dtd
+@@ -3,7 +3,7 @@
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+ 
+ <!ENTITY window.title                 "Block Lists">
+-<!ENTITY window.width                 "50em">
++<!ENTITY window.width                 "52em">
+ 
+ <!ENTITY treehead.list.label          "List">
+ <!ENTITY windowClose.key              "w">
