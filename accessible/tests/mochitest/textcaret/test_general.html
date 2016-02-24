@@ -20,9 +20,7 @@
      */
     function turnCaretBrowsing(aIsOn)
     {
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-        getService(Components.interfaces.nsIPrefBranch);
-      prefs.setBoolPref("accessibility.browsewithcaret", aIsOn);
+      Services.prefs.setBoolPref("accessibility.browsewithcaret", aIsOn);
     }
 
     /**

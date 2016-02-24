@@ -3,11 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 function run_test() {
-  var ps = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefService);
+  var ps = Services.prefs;
 
-  var pb = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+  var pb = Services.prefs;
 
   var observer = {
     QueryInterface: function QueryInterface(aIID) {

@@ -21,14 +21,11 @@ function makeList(a)
 
 function run_test() {
 
-  var ps = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefService);
+  var ps = Services.prefs;
 
-  var pb2= Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+  var pb2 = Services.prefs;
 
-  var pb = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+  var pb = Services.prefs;
 
   //**************************************************************************//
   // Nullsafety

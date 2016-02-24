@@ -25,9 +25,7 @@ var gServer;
 var gServerURL;
 
 function setupPrefs() {
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefService)
-                .QueryInterface(Components.interfaces.nsIPrefBranch);
+  let prefs = Services.prefs;
   prefs.setCharPref(kPrefsCanonicalURL, gServerURL + kCanonicalSitePath);
   prefs.setCharPref(kPrefsCanonicalContent, kCanonicalSiteContent);
   prefs.setIntPref(kPrefsMaxWaitingTime, 0);

@@ -20,8 +20,7 @@ try {
                 getService(Ci.nsINavHistoryService);
   var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].
               getService(Ci.nsINavBookmarksService);
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
 } catch(ex) {
   do_throw("Could not get services\n");
 }

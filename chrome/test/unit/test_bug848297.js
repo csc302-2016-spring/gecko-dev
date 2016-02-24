@@ -17,9 +17,7 @@ var chromeReg = Cc["@mozilla.org/chrome/chrome-registry;1"]
                 .QueryInterface(Ci.nsIToolkitChromeRegistry);
 chromeReg.checkForNewChrome();
 
-var prefService = Cc["@mozilla.org/preferences-service;1"]
-                  .getService(Ci.nsIPrefService)
-                  .QueryInterface(Ci.nsIPrefBranch);
+var prefService = Services.prefs;
 
 function enum_to_array(strings) {
   let rv = [];

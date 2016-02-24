@@ -23,8 +23,7 @@ SimpleTest.waitForExplicitFinish();
 
 function runTests() {
   // Default plugin hang timeout is too high for mochitests
-  var prefs = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   var timeoutPref = "dom.ipc.plugins.timeoutSecs";
   prefs.setIntPref(timeoutPref, 5);
 

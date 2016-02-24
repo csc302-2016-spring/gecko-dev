@@ -10,7 +10,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-var gPrefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+var gPrefs = Services.prefs;
 
 function setWatchdogEnabled(enabled) {
   gPrefs.setBoolPref("dom.use_watchdog", enabled);

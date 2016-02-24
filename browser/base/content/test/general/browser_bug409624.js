@@ -23,8 +23,7 @@ add_task(function* test() {
                        });
   });
 
-  let prefService = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Components.interfaces.nsIPrefService);
+  let prefService = Services.prefs;
 
   let findBar = gFindBar;
   let textbox = gFindBar.getElement("findbar-textbox");

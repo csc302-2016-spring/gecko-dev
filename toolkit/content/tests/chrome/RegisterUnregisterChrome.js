@@ -11,8 +11,7 @@ var gDirSvc    = Cc["@mozilla.org/file/directory_service;1"].
   getService(Ci.nsIDirectoryService).QueryInterface(Ci.nsIProperties);
 var gChromeReg = Cc["@mozilla.org/chrome/chrome-registry;1"].
                     getService(Ci.nsIXULChromeRegistry);
-var gPrefs     = Cc["@mozilla.org/preferences-service;1"].
-                    getService(Ci.nsIPrefBranch);
+var gPrefs     = Services.prefs;
 
 // Create the temporary file in the profile, instead of in TmpD, because
 // we know the mochitest harness kills off the profile when it's done.

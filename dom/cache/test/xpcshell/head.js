@@ -18,7 +18,7 @@ var sts = Cc['@mozilla.org/network/stream-transport-service;1']
 var hash = Cc['@mozilla.org/security/hash;1']
            .createInstance(Ci.nsICryptoHash);
 
-var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 prefs.setBoolPref("dom.requestcache.enabled", true);
 
 // Expose Cache and Fetch symbols on the global

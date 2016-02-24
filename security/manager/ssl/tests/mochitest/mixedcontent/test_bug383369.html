@@ -32,8 +32,7 @@
     var profileDir = dirProvider.get("ProfDS", SpecialPowers.Ci.nsIFile);
     profileDir.append("downloads");
     
-    var prefs = SpecialPowers.Cc["@mozilla.org/preferences-service;1"]
-      .getService(SpecialPowers.Ci.nsIPrefService);
+    var prefs = SpecialPowers.Services.prefs;
     prefs = prefs.getBranch("browser.download.");
         
     prefs.setCharPref("dir", profileDir.path);
@@ -74,8 +73,7 @@
       .getService(SpecialPowers.Ci.nsIHandlerService);
     handlerSvc.remove(handlerInfo);
     
-    var prefs = SpecialPowers.Cc["@mozilla.org/preferences-service;1"]
-      .getService(SpecialPowers.Ci.nsIPrefService);
+    var prefs = SpecialPowers.Services.prefs;
     prefs = prefs.getBranch("browser.download.");
 
     var prefKeys = ["dir", "useDownloadDir", "folderList", 

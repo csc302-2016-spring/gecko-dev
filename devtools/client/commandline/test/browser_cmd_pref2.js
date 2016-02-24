@@ -3,9 +3,7 @@
 
 // Tests that the pref commands work
 
-var prefBranch = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefService).getBranch(null)
-                    .QueryInterface(Ci.nsIPrefBranch2);
+var prefBranch = Services.prefs.getBranch(null);
 
 const TEST_URI = "data:text/html;charset=utf-8,gcli-pref2";
 

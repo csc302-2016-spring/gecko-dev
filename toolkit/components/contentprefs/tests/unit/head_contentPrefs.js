@@ -159,8 +159,7 @@ function inChildProcess() {
 // problems with the tests. Note that we cannot do this in a child process
 // without crashing (but we don't need it anyhow)
 if (!inChildProcess()) {
-  var prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                   getService(Ci.nsIPrefBranch);
+  var prefBranch = Services.prefs;
   prefBranch.setBoolPref("browser.preferences.content.log", true);
 }
 

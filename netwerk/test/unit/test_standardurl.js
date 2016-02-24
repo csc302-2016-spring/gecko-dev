@@ -283,8 +283,7 @@ add_test(function test_percentDecoding()
 
 add_test(function test_hugeStringThrows()
 {
-  let prefs = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Ci.nsIPrefService);
+  let prefs = Services.prefs;
   let maxLen = prefs.getIntPref("network.standard-url.max-length");
   let url = stringToURL("http://test:test@example.com");
 

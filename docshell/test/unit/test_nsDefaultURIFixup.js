@@ -1,7 +1,6 @@
 var urifixup = Cc["@mozilla.org/docshell/urifixup;1"].
                getService(Ci.nsIURIFixup);
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 var pref = "browser.fixup.typo.scheme";
 

@@ -122,8 +122,7 @@ MozFileLogger.close = function() {
 }
 
 try {
-  var prefs = Components.classes['@mozilla.org/preferences-service;1']
-    .getService(Components.interfaces.nsIPrefBranch2);
+  var prefs = Services.prefs;
   var filename = prefs.getCharPref('talos.logfile');
   MozFileLogger.init(filename);
 } catch (ex) {} //pref does not exist, return empty string

@@ -25,7 +25,7 @@ function run_test()
     // needs a place where it can store databases.
     do_get_profile();
 
-    var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var prefs = Services.prefs;
     prefs.setBoolPref("geo.wifi.scan", false);
     prefs.setCharPref("geo.wifi.uri", "UrlNotUsedHere:");
     prefs.setBoolPref("dom.testing.ignore_ipc_principal", true);

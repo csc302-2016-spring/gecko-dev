@@ -17,8 +17,7 @@ class testSingleFingerMouse(MarionetteTestCase):
         # set context menu related preferences needed for some tests
         self.marionette.set_context("chrome")
         self.enabled = self.marionette.execute_script("""
-let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefBranch);
+let prefs = Services.prefs;
 let value = false;
 try {
   value = prefs.getBoolPref("ui.click_hold_context_menus");
@@ -28,8 +27,7 @@ prefs.setBoolPref("ui.click_hold_context_menus", true);
 return value;
 """)
         self.wait_time = self.marionette.execute_script("""
-let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefBranch);
+let prefs = Services.prefs;
 let value = 750;
 try {
   value = prefs.getIntPref("ui.click_hold_context_menus.delay");
@@ -44,14 +42,12 @@ return value;
         self.marionette.set_context("chrome")
         self.marionette.execute_script(
                           """
-let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefBranch);
+let prefs = Services.prefs;
 prefs.setBoolPref("ui.click_hold_context_menus", arguments[0]);
 """, [self.enabled])
         self.marionette.execute_script(
                           """
-let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefBranch);
+let prefs = Services.prefs;
 prefs.setIntPref("ui.click_hold_context_menus.delay", arguments[0]);
 """, [self.wait_time])
         self.marionette.set_context("content")

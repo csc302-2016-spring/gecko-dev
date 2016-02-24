@@ -23,8 +23,7 @@ var secMan = Cc["@mozilla.org/scriptsecuritymanager;1"]
                .getService(Ci.nsIScriptSecurityManager);
 
 // Disable hashcompleter noise for tests
-var prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                 getService(Ci.nsIPrefBranch);
+var prefBranch = Services.prefs;
 prefBranch.setIntPref("urlclassifier.gethashnoise", 0);
 
 // Enable malware/phishing checking for tests

@@ -287,8 +287,7 @@
       ok(!matchCaseCheckbox.hidden, "match case box is hidden in manual mode");
       ok(matchCaseLabel.hidden, "match case label is visible in manual mode");
 
-      var prefsvc = Cc["@mozilla.org/preferences-service;1"].
-                    getService(Components.interfaces.nsIPrefBranch);
+      var prefsvc = Services.prefs;
       prefsvc.setIntPref("accessibility.typeaheadfind.casesensitive", 2);
 
       ok(matchCaseCheckbox.hidden,
@@ -499,8 +498,7 @@
       enterStringIntoFindField(SEARCH_TEXT);
       gFindBar.clear();
 
-      let prefsvc = Cc["@mozilla.org/preferences-service;1"]
-                      .getService(Ci.nsIPrefBranch);
+      let prefsvc = Services.prefs;
       prefsvc.setIntPref("accessibility.typeaheadfind.casesensitive", 0);
 
       enterStringIntoFindField("t");
@@ -520,8 +518,7 @@
     function testFailedStringReset(aCallback) {
       let deferred = Promise.defer();
 
-      var prefsvc = Cc["@mozilla.org/preferences-service;1"].
-                    getService(Components.interfaces.nsIPrefBranch);
+      var prefsvc = Services.prefs;
       prefsvc.setIntPref("accessibility.typeaheadfind.casesensitive", 1);
 
       enterStringIntoFindField(SEARCH_TEXT.toUpperCase());

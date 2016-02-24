@@ -21,9 +21,7 @@ exports.testReset = function(assert) {
 };
 
 exports.testGetAndSet = function(assert) {
-  let svc = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefService).
-            getBranch(null);
+  let svc = Services.prefs.getBranch(null);
   svc.setCharPref("test_set_get_pref", "a normal string");
   assert.equal(prefs.get("test_set_get_pref"), "a normal string",
                    "preferences-service should read from " +

@@ -115,8 +115,7 @@ function run_test()
   }
   pm.addFromPrincipal(principal, "offline-app", Ci.nsIPermissionManager.ALLOW_ACTION);
 
-  var ps = Cc["@mozilla.org/preferences-service;1"]
-    .getService(Ci.nsIPrefBranch);
+  var ps = Services.prefs;
   ps.setBoolPref("browser.cache.offline.enable", true);
   // Set this pref to mimic the default browser behavior.
   ps.setComplexValue("browser.cache.offline.parent_directory", Ci.nsILocalFile, profileDir);

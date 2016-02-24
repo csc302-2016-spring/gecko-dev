@@ -7,8 +7,7 @@ function run_test() {
   const Cr = Components.results;
   const PREF_NAME = "testPref";
 
-  var ps = Cc["@mozilla.org/preferences-service;1"]
-           .getService(Ci.nsIPrefService);
+  var ps = Services.prefs;
   var prefs = ps.getDefaultBranch(null);
   var userprefs = ps.getBranch(null);
 

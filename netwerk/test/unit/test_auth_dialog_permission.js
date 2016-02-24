@@ -8,8 +8,7 @@
 
 Cu.import("resource://testing-common/httpd.js");
 
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 function authHandler(metadata, response) {
   // btoa("guest:guest"), but that function is not available here

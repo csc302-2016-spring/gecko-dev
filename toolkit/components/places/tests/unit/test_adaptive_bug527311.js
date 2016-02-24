@@ -16,8 +16,7 @@ var bs = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].
          getService(Ci.nsINavBookmarksService);
 var os = Cc["@mozilla.org/observer-service;1"].
          getService(Ci.nsIObserverService);
-var ps = Cc["@mozilla.org/preferences-service;1"].
-         getService(Ci.nsIPrefBranch);
+var ps = Services.prefs;
 
 const PLACES_AUTOCOMPLETE_FEEDBACK_UPDATED_TOPIC =
   "places-autocomplete-feedback-updated";

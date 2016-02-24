@@ -24,8 +24,7 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=662519
 
   // We have to enable dom.disable_open_during_load which is disabled
   // by the test harness.
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefBranch);
+  let prefs = Services.prefs;
   var gLastDomLoadValue = prefs.getBoolPref("dom.disable_open_during_load");
   prefs.setBoolPref("dom.disable_open_during_load", true);
 

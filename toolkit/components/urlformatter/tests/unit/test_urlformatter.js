@@ -7,8 +7,7 @@ function run_test() {
   var locale = Cc["@mozilla.org/chrome/chrome-registry;1"].
                getService(Ci.nsIXULChromeRegistry).
                getSelectedLocale('global');
-  var prefs = Cc['@mozilla.org/preferences-service;1'].
-              getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   var sysInfo = Cc["@mozilla.org/system-info;1"].
                 getService(Ci.nsIPropertyBag2);
   var OSVersion = sysInfo.getProperty("name") + " " +

@@ -71,15 +71,13 @@ if (runningInParent &&
     "mozIAsyncHistory" in Components.interfaces) {
   // Ensure places history is enabled for xpcshell-tests as some non-FF
   // apps disable it.
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-              .getService(Components.interfaces.nsIPrefBranch);
+  let prefs = Services.prefs;
   prefs.setBoolPref("places.history.enabled", true);
 }
 
 try {
   if (runningInParent) {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefBranch);
+    let prefs = Services.prefs;
 
     // disable necko IPC security checks for xpcshell, as they lack the
     // docshells needed to pass them
@@ -367,8 +365,7 @@ function _register_modules_protocol_handler() {
 /* Debugging support */
 // Used locally and by our self-tests.
 function _setupDebuggerServer(breakpointFiles, callback) {
-  let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-              .getService(Components.interfaces.nsIPrefBranch);
+  let prefs = Services.prefs;
 
   // Always allow remote debugging.
   prefs.setBoolPref("devtools.debugger.remote-enabled", true);
@@ -1569,8 +1566,7 @@ try {
   if (runningInParent) {
     // Always use network provider for geolocation tests
     // so we bypass the OSX dialog raised by the corelocation provider
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-      .getService(Components.interfaces.nsIPrefBranch);
+    let prefs = Services.prefs;
 
     prefs.setBoolPref("geo.provider.testing", true);
   }
@@ -1579,8 +1575,7 @@ try {
 // We need to avoid hitting the network with certain components.
 try {
   if (runningInParent) {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-      .getService(Components.interfaces.nsIPrefBranch);
+    let prefs = Services.prefs;
 
     prefs.setCharPref("media.gmp-manager.url.override", "http://%(server)s/dummy-gmp-manager.xml");
     prefs.setCharPref("extensions.systemAddon.update.url", "http://%(server)s/dummy-system-addons.xml");
@@ -1594,8 +1589,7 @@ try {
 // selected by default).
 try {
   if (runningInParent) {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-      .getService(Components.interfaces.nsIPrefBranch);
+    let prefs = Services.prefs;
 
     prefs.deleteBranch("lightweightThemes.selectedThemeID");
     prefs.deleteBranch("browser.devedition.theme.enabled");

@@ -56,8 +56,7 @@ var scrollbarTester = {
        "Scrollbar thumb should follow the mouse when dragged.");
   },
   setScrollToClick: function(value) {
-    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefService);
+    var prefService = Services.prefs;
     var uiBranch = prefService.getBranch("ui.");
     uiBranch.setIntPref("scrollToClick", value ? 1 : 0);
   },

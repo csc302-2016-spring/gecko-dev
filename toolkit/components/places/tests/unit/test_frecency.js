@@ -279,8 +279,7 @@ function run_test()
 add_task(function* test_frecency()
 {
   // always search in history + bookmarks, no matter what the default is
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
 
   prefs.setBoolPref("browser.urlbar.suggest.history", true);
   prefs.setBoolPref("browser.urlbar.suggest.bookmark", true);

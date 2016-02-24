@@ -168,8 +168,7 @@ class MarionetteProtocol(Protocol):
         self.logger.info("Setting pref %s (%s)" % (name, value))
 
         script = """
-            let prefInterface = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefBranch);
+            let prefInterface = Services.prefs;
             let pref = '%s';
             let type = prefInterface.getPrefType(pref);
             let value = %s;
@@ -191,8 +190,7 @@ class MarionetteProtocol(Protocol):
     def clear_user_pref(self, name):
         self.logger.info("Clearing pref %s" % (name))
         script = """
-            let prefInterface = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefBranch);
+            let prefInterface = Services.prefs;
             let pref = '%s';
             prefInterface.clearUserPref(pref);
             """ % name
@@ -201,8 +199,7 @@ class MarionetteProtocol(Protocol):
 
     def get_pref(self, name):
         script = """
-            let prefInterface = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefBranch);
+            let prefInterface = Services.prefs;
             let pref = '%s';
             let type = prefInterface.getPrefType(pref);
             switch(type) {

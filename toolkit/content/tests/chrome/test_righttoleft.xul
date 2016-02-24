@@ -30,8 +30,7 @@
 
       SimpleTest.waitForExplicitFinish();
 
-      let prefs = Cc["@mozilla.org/preferences-service;1"].
-                  getService(Ci.nsIPrefBranch);
+      let prefs = Services.prefs;
       const UI_DIRECTION_PREF = "intl.uidirection.ar";
       prefs.setCharPref(UI_DIRECTION_PREF, "rtl");
 

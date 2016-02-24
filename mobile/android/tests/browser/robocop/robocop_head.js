@@ -54,8 +54,7 @@ catch (e) { }
 
 try {
   if (runningInParent) {
-    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefBranch);
+    let prefs = Services.prefs;
 
     // disable necko IPC security checks for xpcshell, as they lack the
     // docshells needed to pass them

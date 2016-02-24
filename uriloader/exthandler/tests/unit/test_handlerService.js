@@ -15,8 +15,7 @@ function run_test() {
   const protoSvc = Cc["@mozilla.org/uriloader/external-protocol-service;1"].
                    getService(Ci.nsIExternalProtocolService);
   
-  const prefSvc = Cc["@mozilla.org/preferences-service;1"].
-                  getService(Ci.nsIPrefService);
+  const prefSvc = Services.prefs;
                   
   const ioService = Cc["@mozilla.org/network/io-service;1"].
                     getService(Ci.nsIIOService);

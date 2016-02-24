@@ -8,8 +8,7 @@ Cu.import("resource://gre/modules/NetUtil.jsm");
 
 do_get_profile();
 
-const prefService = Cc["@mozilla.org/preferences-service;1"]
-                       .getService(Ci.nsIPrefBranch);
+const prefService = Services.prefs;
 
 const httpserver = new HttpServer();
 

@@ -10,8 +10,7 @@ var ios = Cc["@mozilla.org/network/io-service;1"]
 
 var pps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService();
 
-var prefs = Cc["@mozilla.org/preferences-service;1"]
-               .getService(Components.interfaces.nsIPrefBranch);
+var prefs = Services.prefs;
 
 var pgen = Cc["@mozilla.org/pac-generator;1"]
               .getService(Components.interfaces.nsIPACGenerator);

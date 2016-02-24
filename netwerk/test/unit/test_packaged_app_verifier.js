@@ -23,8 +23,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 var gIoService = Cc["@mozilla.org/network/io-service;1"]
                    .getService(Ci.nsIIOService);
 
-var gPrefs = Cc["@mozilla.org/preferences-service;1"]
-               .getService(Components.interfaces.nsIPrefBranch);
+var gPrefs = Services.prefs;
 
 var gVerifier = Cc["@mozilla.org/network/packaged-app-verifier;1"]
                   .createInstance(Ci.nsIPackagedAppVerifier);

@@ -227,8 +227,7 @@ function run_test() {
   httpserv.identity.add("http", "somesite", 80);
   httpserv.start(-1);
 
-  const prefs = Cc["@mozilla.org/preferences-service;1"]
-                         .getService(Ci.nsIPrefBranch);
+  const prefs = Services.prefs;
   prefs.setCharPref("network.proxy.http", "localhost");
   prefs.setIntPref("network.proxy.http_port", httpserv.identity.primaryPort);
   prefs.setCharPref("network.proxy.no_proxies_on", "");

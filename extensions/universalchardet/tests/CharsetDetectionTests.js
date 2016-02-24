@@ -23,8 +23,7 @@ function CharsetDetectionTests(aTestFile, aExpectedCharset, aDetectorList)
 
 function InitDetectorTests()
 {
-    var prefService = Cc["@mozilla.org/preferences-service;1"]
-        .getService(Ci.nsIPrefBranch);
+    var prefService = Services.prefs;
     var str = Cc["@mozilla.org/supports-string;1"]
         .createInstance(Ci.nsISupportsString);
     var loader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
@@ -62,8 +61,7 @@ function InitDetectorTests()
 
 function SetDetectorPref(aPrefValue)
 {
-    var prefService = Cc["@mozilla.org/preferences-service;1"]
-                      .getService(Ci.nsIPrefBranch);
+    var prefService = Services.prefs;
     var str = Cc["@mozilla.org/supports-string;1"]
               .createInstance(Ci.nsISupportsString);
     str.data = aPrefValue;

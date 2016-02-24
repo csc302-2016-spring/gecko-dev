@@ -346,8 +346,7 @@ function finish() {
   // If the test changed the value of max_total_viewers via a call to
   // enableBFCache(), then restore it now.
   if (typeof(gOrigMaxTotalViewers) != "undefined") {
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefBranch);
+    var prefs = Services.prefs;
     prefs.setIntPref("browser.sessionhistory.max_total_viewers",
       gOrigMaxTotalViewers);
   }
@@ -428,8 +427,7 @@ function waitForTrue(fn, onWaitComplete, timeout) {
  *           to 0 (disabled), if a number, set it to that specific number
  */
 function enableBFCache(enable) {
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-              .getService(Components.interfaces.nsIPrefBranch);
+  var prefs = Services.prefs;
   
   // If this is the first time the test called enableBFCache(),
   // store the original value of max_total_viewers, so it can

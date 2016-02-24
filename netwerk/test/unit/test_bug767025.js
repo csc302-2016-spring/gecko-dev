@@ -65,8 +65,7 @@ function app_handler(metadata, response) {
 var httpServer;
 
 function init_profile() {
-  var ps = Cc["@mozilla.org/preferences-service;1"]
-    .getService(Ci.nsIPrefBranch);
+  var ps = Services.prefs;
   dump(ps.getBoolPref("browser.cache.offline.enable"));
   ps.setBoolPref("browser.cache.offline.enable", true);
   ps.setComplexValue("browser.cache.offline.parent_directory",

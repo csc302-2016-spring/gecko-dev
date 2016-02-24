@@ -70,9 +70,7 @@ function completeIter(request, data, ctx)
 
 function run_test()
 {
-    var prefService =
-        Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefService);
+    var prefService = Services.prefs;
     domBranch = prefService.getBranch("network.http.assoc-req.");
     oldPrefVal = domBranch.getBoolPref("enforce");
     domBranch.setBoolPref("enforce", true);

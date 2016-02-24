@@ -142,8 +142,7 @@ function getUA()
 
 function setUA(value)
 {
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-                 getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setCharPref("general.useragent.override", value);
 }
 

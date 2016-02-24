@@ -6,9 +6,7 @@ var pageSource =
   '</body></html>';
 
 var oldDiscardingPref, oldTab, newTab;
-var prefBranch = Cc["@mozilla.org/preferences-service;1"]
-                   .getService(Ci.nsIPrefService)
-                   .getBranch('image.mem.');
+var prefBranch = Services.prefs.getBranch('image.mem.');
 
 var gWaitingForDiscard = false;
 var gScriptedObserver;

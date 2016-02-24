@@ -1,7 +1,7 @@
 var Ci = Components.interfaces;
 var Cc = Components.classes;
 
-var pb = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+var pb = Services.prefs;
 
 // This pref is chosen somewhat arbitrarily --- we just need one
 // that's guaranteed to have a default value.
@@ -11,7 +11,7 @@ var initialValue = null;
 
 function check_child_pref_info_eq(continuation) {
     sendCommand(
-        'var pb = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);\n'+
+        'var pb = Services.prefs;\n'+
         // Returns concatenation "[value],[isUser]"
         'pb.getCharPref("'+ kPrefName +'")+ "," +'+
         'pb.prefHasUserValue("'+ kPrefName +'");',

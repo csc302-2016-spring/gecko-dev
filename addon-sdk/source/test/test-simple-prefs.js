@@ -24,8 +24,7 @@ const { preferencesBranch, id } = require('sdk/self');
 const { modelFor } = require('sdk/model/core');
 require('sdk/tabs');
 
-const prefsrv = Cc['@mozilla.org/preferences-service;1'].
-                    getService(Ci.nsIPrefService);
+const prefsrv = Services.prefs;
 
 const specialChars = "!@#$%^&*()_-=+[]{}~`\'\"<>,./?;:";
 

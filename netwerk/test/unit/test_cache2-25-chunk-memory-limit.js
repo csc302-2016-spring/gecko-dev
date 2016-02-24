@@ -23,8 +23,7 @@ function run_test()
     return;
   }
 
-  var prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                     getService(Ci.nsIPrefBranch);
+  var prefBranch = Services.prefs;
 
   // set max chunks memory so that only one full chunk fits within the limit
   prefBranch.setIntPref("browser.cache.disk.max_chunks_memory_usage", 300);

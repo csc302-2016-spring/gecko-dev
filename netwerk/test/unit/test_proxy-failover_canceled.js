@@ -36,8 +36,7 @@ function run_test()
   var nc = new ChannelEventSink();
   nc._flags = ES_ABORT_REDIRECT;
 
-  var prefserv = Cc["@mozilla.org/preferences-service;1"].
-                 getService(Ci.nsIPrefService);
+  var prefserv = Services.prefs;
   var prefs = prefserv.getBranch("network.proxy.");
   prefs.setIntPref("type", 2);
   prefs.setCharPref("autoconfig_url", "data:text/plain," +

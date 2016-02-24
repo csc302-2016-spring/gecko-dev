@@ -23,8 +23,7 @@ function getTestReferrer(server_uri, referer_uri) {
 }
 
 function run_test() {
-  var prefs = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefBranch);
+  var prefs = Services.prefs;
 
   var server_uri = "http://bar.examplesite.com/path2";
   var server_uri_2 = "http://bar.example.com/anotherpath";

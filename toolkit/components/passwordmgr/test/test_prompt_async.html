@@ -12,8 +12,7 @@
         SimpleTest.waitForExplicitFinish();
         SimpleTest.requestFlakyTimeout("untriaged");
 
-        var prefs = Cc["@mozilla.org/preferences-service;1"].
-                        getService(Ci.nsIPrefBranch);
+        var prefs = Services.prefs;
         prefs.setIntPref("network.auth.subresource-http-auth-allow", 2);
         // Class monitoring number of open dialog windows
         // It checks there is always open just a single dialog per application

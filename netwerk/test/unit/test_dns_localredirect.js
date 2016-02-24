@@ -1,5 +1,5 @@
 var dns = Cc["@mozilla.org/network/dns-service;1"].getService(Ci.nsIDNSService);
-var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 var listener = {
   onLookupComplete: function(inRequest, inRecord, inStatus) {

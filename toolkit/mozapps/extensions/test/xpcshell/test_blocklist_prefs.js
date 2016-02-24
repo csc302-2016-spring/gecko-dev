@@ -10,8 +10,7 @@ var {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;
 const URI_EXTENSION_BLOCKLIST_DIALOG = "chrome://mozapps/content/extensions/blocklist.xul";
 
 XPCOMUtils.defineLazyGetter(this, "gPref", function bls_gPref() {
-  return Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).
-         QueryInterface(Ci.nsIPrefBranch);
+  return Services.prefs;
 });
 
 Cu.import("resource://testing-common/httpd.js");

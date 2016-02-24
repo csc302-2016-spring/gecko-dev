@@ -33,8 +33,7 @@
     }
 
     var color = '#2468AC';
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefBranch);
+    var prefs = Services.prefs;
     prefs.setCharPref('browser.display.background_color', color);
 
     function runTests() {

@@ -34,8 +34,7 @@ function printpreview() {
       throw Components.results.NS_NOINTERFACE;
     }
   }
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setBoolPref('print.show_print_progress', false);
   //XXX I would have thought this would work, instead I'm forced to use prefs service
   gWbp.globalPrintSettings.showPrintProgress = false; 

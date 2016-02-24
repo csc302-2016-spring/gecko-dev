@@ -386,8 +386,7 @@ function run_test() {
   do_check_eq(ltm.currentTheme, null);
 
   // Force the theme into the prefs anyway
-  let prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  let prefs = Services.prefs;
   let themes = [data];
   prefs.setCharPref("lightweightThemes.usedThemes", JSON.stringify(themes));
   do_check_eq(ltm.usedThemes.length, 1);

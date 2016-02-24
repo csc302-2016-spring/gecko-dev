@@ -18,9 +18,7 @@ const resourceHandler = ioService.getProtocolHandler('resource').
 const systemPrincipal = CC('@mozilla.org/systemprincipal;1', 'nsIPrincipal')();
 const scriptLoader = Cc['@mozilla.org/moz/jssubscript-loader;1'].
                      getService(Ci.mozIJSSubScriptLoader);
-const prefService = Cc['@mozilla.org/preferences-service;1'].
-                    getService(Ci.nsIPrefService).
-                    QueryInterface(Ci.nsIPrefBranch);
+const prefService = Services.prefs;
 const appInfo = Cc["@mozilla.org/xre/app-info;1"].
                 getService(Ci.nsIXULAppInfo);
 const vc = Cc["@mozilla.org/xpcom/version-comparator;1"].

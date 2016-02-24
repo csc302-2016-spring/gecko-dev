@@ -6,8 +6,7 @@
 var gExpectedStatus = null;
 var gNextTestFunc   = null;
 
-var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-    getService(Components.interfaces.nsIPrefBranch);
+var prefs = Services.prefs;
 
 var asyncXHR = {
   load: function() {

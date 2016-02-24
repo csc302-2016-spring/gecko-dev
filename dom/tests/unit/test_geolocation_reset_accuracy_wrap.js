@@ -53,7 +53,7 @@ function run_test()
   catMan.nsICategoryManager.addCategoryEntry(categoryName, "unit test",
                                              providerContract, false, true);
 
-  var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setBoolPref("dom.testing.ignore_ipc_principal", true);
   prefs.setBoolPref("geo.wifi.scan", false);
 

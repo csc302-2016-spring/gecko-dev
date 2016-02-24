@@ -20,8 +20,8 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=608669
 
 var gOrigMaxTotalViewers = undefined;
 function setCachePref(enabled) {
-  var prefBranch = Components.classes["@mozilla.org/preferences-service;1"]
-                             .getService(Components.interfaces.nsIPrefBranch);
+  var prefBranch = Services.prefs;
+  
   if (enabled) {
     is(typeof gOrigMaxTotalViewers, "undefined", "don't double-enable bfcache");
     prefBranch.setBoolPref("browser.sessionhistory.cache_subframes", true);

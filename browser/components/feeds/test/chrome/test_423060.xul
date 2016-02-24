@@ -22,7 +22,7 @@
       SimpleTest.finish()
 
     /* Turn off the first run UI */
-    var prefBranch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var prefBranch = Services.prefs;
     prefBranch.setBoolPref("browser.feeds.showFirstRunUI", false);
 
     /* register a handler for the feed type */

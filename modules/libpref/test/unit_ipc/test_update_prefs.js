@@ -11,7 +11,7 @@ function run_test() {
 
     do_load_child_test_harness();
 
-    var pb = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var pb = Services.prefs;
 
     // these prefs are set after the child has been created.
     pb.setBoolPref("Test.IPC.bool.new", true);
@@ -23,11 +23,11 @@ function run_test() {
 }
 
 function testPrefClear() {
-  var pb = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  var pb = Services.prefs;
   pb.clearUserPref("Test.IPC.bool.new");
 
   sendCommand(
-'var pb = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);\n'+
+'var pb = Services.prefs;\n'+
 'pb.prefHasUserValue("Test.IPC.bool.new");\n',
     checkWasCleared);
 }

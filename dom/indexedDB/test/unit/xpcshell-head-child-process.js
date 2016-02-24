@@ -18,9 +18,7 @@ function run_test() {
   _HEAD_FILES.push(do_get_file(INDEXEDDB_HEAD_FILE).path.replace(/\\/g, "/"));
 
 
-  let prefs =
-    Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
-                                            .getBranch(null);
+  let prefs = Services.prefs.getBranch(null);
   prefs.setBoolPref(INDEXEDDB_PREF_EXPERIMENTAL, true);
 
   run_test_in_child(thisTest);

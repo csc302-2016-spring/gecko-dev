@@ -44,8 +44,7 @@ function run_test() {
                          systemSettings);
 
   // Ensure we're using system-properties
-  const prefs = Cc["@mozilla.org/preferences-service;1"]
-                   .getService(Ci.nsIPrefBranch);
+  const prefs = Services.prefs;
   prefs.setIntPref(
     "network.proxy.type",
     Components.interfaces.nsIProtocolProxyService.PROXYCONFIG_SYSTEM);

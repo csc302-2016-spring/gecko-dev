@@ -7,8 +7,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 var ioService = Cc["@mozilla.org/network/io-service;1"].
   getService(Ci.nsIIOService);
 
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-  getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 var url = "ws://dnsleak.example.com";
 

@@ -10,8 +10,7 @@
 const Ci = Components.interfaces;
 var mainWindow;
 
-var prefBranch = Components.classes["@mozilla.org/preferences-service;1"]
-                           .getService(Components.interfaces.nsIPrefBranch);
+var prefBranch = Services.prefs;
 prefBranch.setIntPref("browser.startup.page", 0);
 prefBranch.setCharPref("browser.startup.homepage_override.mstone", "ignore");
 

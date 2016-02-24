@@ -153,8 +153,7 @@ var tagsvc = Cc["@mozilla.org/browser/tagging-service;1"].
              getService(Ci.nsITaggingService);
 var iosvc = Cc["@mozilla.org/network/io-service;1"].
             getService(Ci.nsIIOService);
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 // Some date not too long ago
 var gDate = new Date(Date.now() - 1000 * 60 * 60) * 1000;

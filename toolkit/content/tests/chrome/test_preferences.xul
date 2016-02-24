@@ -13,8 +13,7 @@
   <![CDATA[
     SimpleTest.waitForExplicitFinish();
 
-    const kPref = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefBranch);
+    const kPref = Services.prefs;
 
     // preference values, set 1
     const kPrefValueSet1 =

@@ -12,8 +12,7 @@ Cu.import("resource://testing-common/httpd.js");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/NetUtil.jsm");
 
-var gPrefs = Cc["@mozilla.org/preferences-service;1"]
-               .getService(Components.interfaces.nsIPrefBranch);
+var gPrefs = Services.prefs;
 
 var badSignature = [
   "manifest-signature: AAAAAAAAAAAAAAAAAAAAA\r",

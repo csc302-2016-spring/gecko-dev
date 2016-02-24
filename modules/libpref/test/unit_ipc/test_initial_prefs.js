@@ -8,7 +8,7 @@ function isParentProcess() {
 
 function run_test() {
   if (isParentProcess() == false) {
-      var pb = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+      var pb = Services.prefs;
       pb.setBoolPref("Test.IPC.bool", true);
       pb.setIntPref("Test.IPC.int", 23);
       pb.setCharPref("Test.IPC.char", "hey");

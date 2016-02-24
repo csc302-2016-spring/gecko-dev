@@ -99,8 +99,7 @@ function run_test() {
     return;
   }
 
-  var prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                     getService(Ci.nsIPrefBranch);
+  var prefBranch = Services.prefs;
 
   // set max entry size bigger than 64MiB
   prefBranch.setIntPref("browser.cache.disk.max_entry_size", 65*1024);
@@ -129,8 +128,7 @@ function run_test_2()
 
 function run_test_2a()
 {
-  var prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                     getService(Ci.nsIPrefBranch);
+  var prefBranch = Services.prefs;
 
   // set cache capacity lower than max entry size (see comment in
   // write_big_metafile)

@@ -7,7 +7,7 @@ Cu.import("resource://testing-common/httpd.js");
 var httpserver = null;
 
 function run_test() {
-  var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setBoolPref("geo.wifi.scan", false);
 
   httpserver = new HttpServer();

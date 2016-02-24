@@ -1,8 +1,7 @@
 function test() {
   waitForExplicitFinish();
 
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-            .getService(Components.interfaces.nsIPrefBranch);
+  var prefs = Services.prefs;
   var gAutofocusPref = prefs.getBoolPref("browser.autofocus");
   prefs.setBoolPref("browser.autofocus", false);
 

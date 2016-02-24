@@ -17,8 +17,7 @@
       const enabledPref = "dom.workers.enabled";
       const message = "Hi";
 
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefBranch);
+      var prefs = Services.prefs;
       is(prefs.getBoolPref(enabledPref), true, "Workers should be enabled.");
 
       prefs.setBoolPref(enabledPref, false);

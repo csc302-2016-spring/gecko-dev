@@ -74,8 +74,7 @@ function runTest()
   testHTMLElements(htmlElements, isMac, isWin && !expectedVisible);
 
   if (isMac) {
-    var prefs = SpecialPowers.Cc["@mozilla.org/preferences-service;1"].
-                  getService(SpecialPowers.Ci.nsIPrefBranch);
+    var prefs = SpecialPowers.Services.prefs;
     prefs.setBoolPref("accessibility.mouse_focuses_formcontrol", true);
 
     testHTMLElements(htmlElementsMacPrefSet, true, false);

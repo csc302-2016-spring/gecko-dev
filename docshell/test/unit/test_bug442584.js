@@ -2,8 +2,7 @@ var prefetch = Cc["@mozilla.org/prefetch-service;1"].
                getService(Ci.nsIPrefetchService);
 var ios = Cc["@mozilla.org/network/io-service;1"].
           getService(Ci.nsIIOService);
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 function run_test() {
   // Fill up the queue

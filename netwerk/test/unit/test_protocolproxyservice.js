@@ -23,8 +23,7 @@ var ios = Components.classes["@mozilla.org/network/io-service;1"]
                     .getService(Components.interfaces.nsIIOService);
 var pps = Components.classes["@mozilla.org/network/protocol-proxy-service;1"]
                     .getService();
-var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                     .getService(Components.interfaces.nsIPrefBranch);
+var prefs = Services.prefs;
 
 /**
  * Test nsIProtocolHandler that allows proxying, but doesn't allow HTTP

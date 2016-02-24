@@ -107,7 +107,7 @@ function run_test() {
   // initialize the blocklist with no entries
   copyBlocklistToProfile(do_get_file("data/test_bug514327_3_empty.xml"));
   
-  gPrefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  gPrefs = Services.prefs;
   gBlocklist = Cc["@mozilla.org/extensions/blocklist;1"].getService(nsIBLS);
   
   // should NOT be marked as outdated by the blocklist

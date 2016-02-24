@@ -1056,8 +1056,7 @@ class Marionette(object):
             if type(value) is not str:
                 value = json.dumps(value)
             pref_exists = self.execute_script("""
-            let prefInterface = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefBranch);
+            let prefInterface = Services.prefs;
             let pref = '%s';
             let value = '%s';
             let type = prefInterface.getPrefType(pref);

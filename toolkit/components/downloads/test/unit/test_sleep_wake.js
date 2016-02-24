@@ -38,8 +38,7 @@ function run_test()
   /**
    * 0. Speed up the resume on wake delay from 10 seconds
    */
-  Cc["@mozilla.org/preferences-service;1"].
-  getService(Ci.nsIPrefBranch).
+  Services.prefs.
   setIntPref("browser.download.manager.resumeOnWakeDelay", 1000);
 
   /**

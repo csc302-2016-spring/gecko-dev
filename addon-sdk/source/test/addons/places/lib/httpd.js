@@ -176,8 +176,7 @@ function getRootPrefBranch()
 {
   if (!gRootPrefBranch)
   {
-    gRootPrefBranch = Cc["@mozilla.org/preferences-service;1"]
-                        .getService(Ci.nsIPrefBranch);
+    gRootPrefBranch = Services.prefs;
   }
   return gRootPrefBranch;
 }

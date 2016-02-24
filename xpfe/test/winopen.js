@@ -62,8 +62,7 @@ if ( KID_CHROME ) {
     // Reset browser.chromeURL so it points to KID_CHROME.
     // This will cause window.open in openWindow to open that chrome.
     netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-    prefs = Components.classes["@mozilla.org/preferences-service;1"]
-              .getService( Components.interfaces.nsIPrefBranch );
+    prefs = Services.prefs;
     SAVED_CHROME = prefs.getCharPref( "browser.chromeURL" );
     prefs.setCharPref( "browser.chromeURL", KID_CHROME );
 }

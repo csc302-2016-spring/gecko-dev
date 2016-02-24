@@ -83,8 +83,7 @@ function run_test() {
     return;
   }
 
-  let prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                   getService(Ci.nsIPrefBranch);
+  let prefBranch = Services.prefs;
 
   do_test_pending();
   let httpserv = new HttpServer();

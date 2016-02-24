@@ -5,8 +5,7 @@ Cu.import("resource://testing-common/httpd.js");
 Cu.import("resource://gre/modules/NetUtil.jsm");
 
 // Turn off the authentication dialog blocking for this test.
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 prefs.setIntPref("network.auth.subresource-http-auth-allow", 2);
 
 XPCOMUtils.defineLazyGetter(this, "URL", function() {

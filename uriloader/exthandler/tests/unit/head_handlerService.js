@@ -62,8 +62,7 @@ var HandlerServiceTest = {
     this._deleteDatasourceFile();
 
     // Turn on logging so we can troubleshoot problems with the tests.
-    var prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                     getService(Ci.nsIPrefBranch);
+    var prefBranch = Services.prefs;
     prefBranch.setBoolPref("browser.contentHandling.log", true);
   },
 

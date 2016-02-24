@@ -290,9 +290,7 @@ add_test(function test_ignore_hotfixes() {
   do_check_false(store.isAddonSyncable(dummy));
 
   // Verify that int values don't throw off checking.
-  let prefSvc = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Ci.nsIPrefService)
-                .getBranch("extensions.");
+  let prefSvc = Services.prefs.getBranch("extensions.");
   // Need to delete pref before changing type.
   prefSvc.deleteBranch("hotfix.id");
   prefSvc.setIntPref("hotfix.id", 0xdeadbeef);

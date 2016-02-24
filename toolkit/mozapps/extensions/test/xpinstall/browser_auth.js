@@ -8,8 +8,7 @@ function test() {
   Harness.installsCompletedCallback = finish_test;
   Harness.setup();
 
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-                        getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setIntPref("network.auth.subresource-http-auth-allow", 2);
 
   var pm = Services.perms;

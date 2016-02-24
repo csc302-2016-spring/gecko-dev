@@ -21,8 +21,7 @@ function arrayenumerator(a)
 }
 
 function run_test() {
-  var ps = Cc["@mozilla.org/preferences-service;1"].
-    getService(Ci.nsIPrefService).QueryInterface(Ci.nsIPrefBranch);
+  var ps = Services.prefs;
 
   var extprefs = [do_get_file("extdata")];
   

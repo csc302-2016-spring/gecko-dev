@@ -9,8 +9,7 @@
 <script class="testbody" type="application/javascript">
 <![CDATA[
 
-var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefBranch);
+var prefs = Services.prefs;
 prefs.setBoolPref("general.smoothScroll", false);
 
 var winUtils = SpecialPowers.getDOMWindowUtils(window);

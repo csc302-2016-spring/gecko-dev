@@ -123,20 +123,17 @@ function GetFileFromURISpec(uriSpec)
 
 function SaveStringPref(inPrefName, inPrefValue)
 {
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  prefs.setCharPref(inPrefName, inPrefValue);
+  Services.prefs.setCharPref(inPrefName, inPrefValue);
 }
 
 function GetStringPref(inPrefName)
 {
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  return prefs.getCharPref(inPrefName); 
+  return Services.prefs.getCharPref(inPrefName); 
 }
 
 function ClearPref(inPrefName)
 {
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  prefs.clearUserPref(inPrefName); 
+  Services.prefs.clearUserPref(inPrefName); 
 }
 
 function WriteOutput(aText, aReplace, aColorString)

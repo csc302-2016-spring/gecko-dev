@@ -55,7 +55,7 @@ function run_test()
     httpserver = new HttpServer();
     httpserver.registerPathHandler("/geo", geoHandler);
     httpserver.start(-1);
-    var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var prefs = Services.prefs;
     prefs.setBoolPref("geo.wifi.scan", false);
     prefs.setCharPref("geo.wifi.uri", "http://localhost:" +
                       httpserver.identity.primaryPort + "/geo");

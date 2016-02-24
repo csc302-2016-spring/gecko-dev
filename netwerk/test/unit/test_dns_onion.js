@@ -4,7 +4,7 @@ var mainThread = threadManager.currentThread;
 
 var onionPref;
 var localdomainPref;
-var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+var prefs = Services.prefs;
 
 // check that we don't lookup .onion
 var listenerBlock = {

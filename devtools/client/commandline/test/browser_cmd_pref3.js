@@ -3,9 +3,7 @@
 
 // Tests that the pref commands work
 
-var prefBranch = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefService).getBranch(null)
-                    .QueryInterface(Ci.nsIPrefBranch2);
+var prefBranch = Services.prefs.getBranch(null);
 
 var supportsString = Cc["@mozilla.org/supports-string;1"]
                       .createInstance(Ci.nsISupportsString);

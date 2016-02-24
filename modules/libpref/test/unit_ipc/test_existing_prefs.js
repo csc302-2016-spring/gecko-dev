@@ -11,7 +11,7 @@ function run_test() {
 
     do_load_child_test_harness();
  
-    var pb = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var pb = Services.prefs;
     pb.setBoolPref("Test.IPC.bool.new", true);
     pb.setIntPref("Test.IPC.int.new", 23);
     pb.setCharPref("Test.IPC.char.new", "hey");

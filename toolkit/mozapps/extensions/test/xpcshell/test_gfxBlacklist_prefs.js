@@ -89,8 +89,7 @@ function run_test() {
     status = gfxInfo.getFeatureStatus(Ci.nsIGfxInfo.FEATURE_DIRECT3D_9_LAYERS);
     do_check_eq(status, Ci.nsIGfxInfo.FEATURE_STATUS_OK);
 
-    var prefs = Cc["@mozilla.org/preferences-service;1"].
-          getService(Ci.nsIPrefBranch);
+    var prefs = Services.prefs;
     do_check_eq(prefs.getIntPref("gfx.blacklist.direct2d"),
                 Ci.nsIGfxInfo.FEATURE_BLOCKED_DRIVER_VERSION);
 
@@ -114,8 +113,7 @@ function run_test() {
     status = gfxInfo.getFeatureStatus(Ci.nsIGfxInfo.FEATURE_DIRECT3D_9_LAYERS);
     do_check_eq(status, Ci.nsIGfxInfo.FEATURE_STATUS_OK);
 
-    var prefs = Cc["@mozilla.org/preferences-service;1"].
-          getService(Ci.nsIPrefBranch);
+    var prefs = Services.prefs;
     var exists = false;
     try {
       prefs.getIntPref("gfx.blacklist.direct2d");

@@ -614,8 +614,7 @@ function doTests() {
     realm : ""
   };
 
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
 
   const Cc_promptFac= Cc["@mozilla.org/passwordmanager/authpromptfactory;1"];
   ok(Cc_promptFac != null, "Access Cc[@mozilla.org/passwordmanager/authpromptfactory;1]");

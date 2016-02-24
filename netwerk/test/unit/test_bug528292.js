@@ -53,8 +53,7 @@ function run_test()
 
   if (!inChildProcess()) {
     // Disable third-party cookies in general.
-    Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch).
-      setIntPref("network.cookie.cookieBehavior", 1);
+    Services.prefs.setIntPref("network.cookie.cookieBehavior", 1);
   }
 
   var ioService = Cc["@mozilla.org/network/io-service;1"].

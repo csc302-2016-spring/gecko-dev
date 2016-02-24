@@ -566,8 +566,7 @@ ok(pwmgr != null, "Access pwmgr");
 
 pwmgr.removeAllLogins();
 
-var prefs = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefService);
+var prefs = Services.prefs;
 ok(prefs != null, "Access prefs");
 prefs = prefs.getBranch("signon.");
 ok(prefs != null, "Access pref branch");

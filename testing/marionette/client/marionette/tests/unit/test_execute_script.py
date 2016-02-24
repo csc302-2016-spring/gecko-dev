@@ -58,8 +58,7 @@ class TestExecuteContent(MarionetteTestCase):
         self.assertRaises(errors.JavascriptException,
                           self.marionette.execute_script,
                           """
-let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefBranch);
+let prefs = Services.prefs;
 """)
 
     def test_complex_return_values(self):

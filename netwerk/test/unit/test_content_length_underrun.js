@@ -23,7 +23,7 @@ var enforcePrefSoft;
 
 function run_test()
 {
-  prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  prefs = Services.prefs;
   enforcePrefStrict = prefs.getBoolPref("network.http.enforce-framing.http1");
   enforcePrefSoft = prefs.getBoolPref("network.http.enforce-framing.soft");
   prefs.setBoolPref("network.http.enforce-framing.http1", true);

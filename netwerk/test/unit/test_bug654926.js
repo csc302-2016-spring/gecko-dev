@@ -3,8 +3,7 @@ function get_pref_service() {
   if (_PSvc)
     return _PSvc;
 
-  return _PSvc = Cc["@mozilla.org/preferences-service;1"].
-                 getService(Ci.nsIPrefBranch);
+  return _PSvc = Services.prefs;
 }
 
 function gen_1MiB()

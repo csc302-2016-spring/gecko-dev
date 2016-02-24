@@ -467,9 +467,7 @@ var SpecialPowers = {
   },
 
   _getPrefs: function() {
-    var prefService =
-      Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
-    return prefService.getBranch(null);
+    return Services.prefs.getBranch(null);
   },
 
   get Cc() {

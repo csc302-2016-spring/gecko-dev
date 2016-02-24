@@ -86,8 +86,7 @@ const DISCARD_TIMEOUT_PREF = {name: "min_discard_timeout_ms", branch: "image.mem
 
 function setImagePref(pref, val)
 {
-  var prefService = SpecialPowers.Cc["@mozilla.org/preferences-service;1"]
-                                 .getService(SpecialPowers.Ci.nsIPrefService);
+  var prefService = SpecialPowers.Services.prefs;
   var branch = prefService.getBranch(pref.branch);
   if (val != null) {
     switch(pref.type) {
@@ -107,8 +106,7 @@ function setImagePref(pref, val)
 
 function getImagePref(pref)
 {
-  var prefService = SpecialPowers.Cc["@mozilla.org/preferences-service;1"]
-                                 .getService(SpecialPowers.Ci.nsIPrefService);
+  var prefService = SpecialPowers.Services.prefs;
   var branch = prefService.getBranch(pref.branch);
   if (branch.prefHasUserValue(pref.name)) {
     switch (pref.type) {

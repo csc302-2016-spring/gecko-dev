@@ -1026,8 +1026,7 @@ function testMoveFocus()
   is(fm.focusedElement, t25, "move caret to link focusedElement");
 
   // enable caret browsing temporarily to test caret movement
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-                getService(Components.interfaces.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setBoolPref("accessibility.browsewithcaret", true);
 
   synthesizeKey("VK_LEFT", { }, gChildWindow);

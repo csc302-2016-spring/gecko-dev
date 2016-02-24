@@ -12,8 +12,7 @@ const simple = require('sdk/simple-prefs');
 const fixtures = require('./fixtures');
 const { Cc, Ci } = require('chrome');
 
-const prefsrv = Cc['@mozilla.org/preferences-service;1'].
-                    getService(Ci.nsIPrefService);
+const prefsrv = Services.prefs;
 
 function injectOptions(preferences, preferencesBranch, document, parent) {
   inject({

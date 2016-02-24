@@ -22,8 +22,7 @@
 
 function setPref(aDoTest)
 {
-  let prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  let prefs = Services.prefs;
 
   // If we're testing, set retention to auto-remove and auto-close
   prefs.setIntPref("browser.download.manager.retention", aDoTest ? 0 : 2);
@@ -68,8 +67,7 @@ bug413093obs.prototype = {
         ok(!dmui.visible, "Download Manager UI is not showing");
 
         // reset the changed config values to default value
-        let prefs = Cc["@mozilla.org/preferences-service;1"].
-                    getService(Ci.nsIPrefService);
+        let prefs = Services.prefs;
         prefs.clearUserPref("browser.download.manager.retention");
         prefs.clearUserPref("browser.download.manager.closeWhenDone");
 

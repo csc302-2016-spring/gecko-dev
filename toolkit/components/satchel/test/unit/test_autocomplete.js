@@ -41,8 +41,7 @@ function run_test() {
 
     fac = Cc["@mozilla.org/satchel/form-autocomplete;1"].
           getService(Ci.nsIFormAutoComplete);
-    prefs = Cc["@mozilla.org/preferences-service;1"].
-            getService(Ci.nsIPrefBranch);
+    prefs = Services.prefs;
 
     timeGroupingSize = prefs.getIntPref("browser.formfill.timeGroupingSize") * 1000 * 1000;
 

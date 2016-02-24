@@ -1,6 +1,6 @@
 var offlineByDefault = {
   defaultValue: false,
-  prefBranch: SpecialPowers.Cc["@mozilla.org/preferences-service;1"].getService(SpecialPowers.Ci.nsIPrefBranch),
+  prefBranch: SpecialPowers.Services.prefs,
   set: function(allow) {
     try {
       this.defaultValue = this.prefBranch.getBoolPref("offline-apps.allow_by_default");

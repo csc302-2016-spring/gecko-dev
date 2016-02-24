@@ -41,8 +41,7 @@ function run_test() {
   do_check_true(uri1.equals(uri3));
 
   // Make sure our prefs are set such that this test actually means something
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   for (var pref of prefData) {
     try {
       pref.oldVal = prefs.getBoolPref(pref.name);

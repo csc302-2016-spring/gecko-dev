@@ -169,8 +169,7 @@ function tagURI(aURI, aTags) {
  */
 function run_test() {
   // always search in history + bookmarks, no matter what the default is
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
+  var prefs = Services.prefs;
   prefs.setIntPref("browser.urlbar.search.sources", 3);
   prefs.setIntPref("browser.urlbar.default.behavior", 0);
 

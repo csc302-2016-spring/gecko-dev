@@ -19,7 +19,7 @@ function run_test() {
   dump("using port " + serverPort + "\n");
 
   do_get_profile();
-  prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  prefs = Services.prefs;
 
   tlsProfile = prefs.getBoolPref("network.http.spdy.enforce-tls-profile");
 

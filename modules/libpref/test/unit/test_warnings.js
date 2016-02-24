@@ -6,8 +6,7 @@ Cu.import("resource://gre/modules/Promise.jsm");
 
 var cs = Cc["@mozilla.org/consoleservice;1"].
   getService(Ci.nsIConsoleService);
-var ps = Cc["@mozilla.org/preferences-service;1"].
-  getService(Ci.nsIPrefService);
+var ps = Services.prefs;
 
 function makeBuffer(length) {
   return new Array(length + 1).join('x');

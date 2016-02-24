@@ -27,8 +27,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 let didFail = false;
 var file;
 
-let prefBranch = Cc["@mozilla.org/preferences-service;1"].
-                 getService(Ci.nsIPrefBranch);
+let prefBranch = Services.prefs;
 
 let factory = {
   createInstance: function(aOuter, aIid) {

@@ -85,8 +85,7 @@ function resetQuotaManager() {
     var qm = Cc['@mozilla.org/dom/quota/manager;1']
              .getService(Ci.nsIQuotaManager);
 
-    var prefService = Cc['@mozilla.org/preferences-service;1']
-                      .getService(Ci.nsIPrefService);
+    var prefService = Services.prefs;
 
     // enable quota manager testing mode
     var pref = 'dom.quotaManager.testing';

@@ -22,8 +22,7 @@ function testSteps()
 
   info("Setting idle preferences to prevent real 'idle-daily' notification");
 
-  let prefs =
-    Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+  let prefs = Services.prefs;
   prefs.setIntPref("idle.lastDailyNotification", (Date.now() / 1000) - 10);
 
   info("Activating real idle service");
