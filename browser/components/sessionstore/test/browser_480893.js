@@ -9,7 +9,7 @@ function test() {
 
   // Test that starting a new session loads a blank page if Firefox is
   // configured to display a blank page at startup (browser.startup.page = 0)
-  gPrefService.setIntPref("browser.startup.page", 0);
+  Services.prefs.setIntPref("browser.startup.page", 0);
   let tab = gBrowser.addTab("about:sessionrestore");
   gBrowser.selectedTab = tab;
   let browser = tab.linkedBrowser;
@@ -26,8 +26,8 @@ function test() {
       // Test that starting a new session loads the homepage (set to http://mochi.test:8888)
       // if Firefox is configured to display a homepage at startup (browser.startup.page = 1)
       let homepage = "http://mochi.test:8888/";
-      gPrefService.setCharPref("browser.startup.homepage", homepage);
-      gPrefService.setIntPref("browser.startup.page", 1);
+      Services.prefs.setCharPref("browser.startup.homepage", homepage);
+      Services.prefs.setIntPref("browser.startup.page", 1);
       gBrowser.loadURI("about:sessionrestore");
       promiseBrowserLoaded(browser).then(() => {
         let doc = browser.contentDocument;
@@ -41,8 +41,8 @@ function test() {
 
           // close tab, restore default values and finish the test
           gBrowser.removeTab(tab);
-          gPrefService.clearUserPref("browser.startup.page");
-          gPrefService.clearUserPref("browser.startup.homepage");
+          Services.prefs.clearUserPref("browser.startup.page");
+          Services.prefs.clearUserPref("browser.startup.homepage");
           finish();
         });
       });

@@ -121,12 +121,12 @@ function test()
   // and we will assume it is default.
   Services.prefs.clearUserPref('browser.startup.page');
 
-  if (gPrefService.prefHasUserValue(PREF_MSTONE)) {
-    gOriginalMStone = gPrefService.getCharPref(PREF_MSTONE);
+  if (Services.prefs.prefHasUserValue(PREF_MSTONE)) {
+    gOriginalMStone = Services.prefs.getCharPref(PREF_MSTONE);
   }
 
-  if (gPrefService.prefHasUserValue(PREF_OVERRIDE_URL)) {
-    gOriginalOverrideURL = gPrefService.getCharPref(PREF_OVERRIDE_URL);
+  if (Services.prefs.prefHasUserValue(PREF_OVERRIDE_URL)) {
+    gOriginalOverrideURL = Services.prefs.getCharPref(PREF_OVERRIDE_URL);
   }
 
   testDefaultArgs();
@@ -180,17 +180,17 @@ function finish_test()
   // Reset browser.startup.homepage_override.mstone to the original value or
   // clear it if it didn't exist.
   if (gOriginalMStone) {
-    gPrefService.setCharPref(PREF_MSTONE, gOriginalMStone);
-  } else if (gPrefService.prefHasUserValue(PREF_MSTONE)) {
-    gPrefService.clearUserPref(PREF_MSTONE);
+    Services.prefs.setCharPref(PREF_MSTONE, gOriginalMStone);
+  } else if (Services.prefs.prefHasUserValue(PREF_MSTONE)) {
+    Services.prefs.clearUserPref(PREF_MSTONE);
   }
 
   // Reset startup.homepage_override_url to the original value or clear it if
   // it didn't exist.
   if (gOriginalOverrideURL) {
-    gPrefService.setCharPref(PREF_OVERRIDE_URL, gOriginalOverrideURL);
-  } else if (gPrefService.prefHasUserValue(PREF_OVERRIDE_URL)) {
-    gPrefService.clearUserPref(PREF_OVERRIDE_URL);
+    Services.prefs.setCharPref(PREF_OVERRIDE_URL, gOriginalOverrideURL);
+  } else if (Services.prefs.prefHasUserValue(PREF_OVERRIDE_URL)) {
+    Services.prefs.clearUserPref(PREF_OVERRIDE_URL);
   }
 
   writeUpdatesToXMLFile(XML_EMPTY);
@@ -207,9 +207,9 @@ function testDefaultArgs()
   // if it isn't already set.
   Cc["@mozilla.org/browser/clh;1"].getService(Ci.nsIBrowserHandler).defaultArgs;
 
-  let originalMstone = gPrefService.getCharPref(PREF_MSTONE);
+  let originalMstone = Services.prefs.getCharPref(PREF_MSTONE);
 
-  gPrefService.setCharPref(PREF_OVERRIDE_URL, DEFAULT_PREF_URL);
+  Services.prefs.setCharPref(PREF_OVERRIDE_URL, DEFAULT_PREF_URL);
 
   writeUpdatesToXMLFile(XML_EMPTY);
   reloadUpdateManagerData();
@@ -247,11 +247,11 @@ function testDefaultArgs()
     }
 
     if (test.noMstoneChange === undefined) {
-      gPrefService.setCharPref(PREF_MSTONE, "PreviousMilestone");
+      Services.prefs.setCharPref(PREF_MSTONE, "PreviousMilestone");
     }
 
     if (test.noPostUpdatePref == undefined) {
-      gPrefService.setBoolPref(PREF_POSTUPDATE, true);
+      Services.prefs.setBoolPref(PREF_POSTUPDATE, true);
     }
 
     let defaultArgs = Cc["@mozilla.org/browser/clh;1"].
@@ -259,13 +259,13 @@ function testDefaultArgs()
     is(defaultArgs, overrideArgs, "correct value returned by defaultArgs");
 
     if (test.noMstoneChange === undefined || test.noMstoneChange != true) {
-      let newMstone = gPrefService.getCharPref(PREF_MSTONE);
+      let newMstone = Services.prefs.getCharPref(PREF_MSTONE);
       is(originalMstone, newMstone, "preference " + PREF_MSTONE +
          " should have been updated");
     }
 
-    if (gPrefService.prefHasUserValue(PREF_POSTUPDATE)) {
-      gPrefService.clearUserPref(PREF_POSTUPDATE);
+    if (Services.prefs.prefHasUserValue(PREF_POSTUPDATE)) {
+      Services.prefs.clearUserPref(PREF_POSTUPDATE);
     }
   }
 
@@ -332,7 +332,7 @@ function testShowNotification()
     }
 
     reloadUpdateManagerData();
-    gPrefService.setBoolPref(PREF_POSTUPDATE, true);
+    Services.prefs.setBoolPref(PREF_POSTUPDATE, true);
 
     gBG.observe(null, "browser-glue-test", "post-update-notification");
 
@@ -378,7 +378,7 @@ function testShowNotification()
       ok(!updateBox, "Update notification box should not have been displayed");
     }
 
-    let prefHasUserValue = gPrefService.prefHasUserValue(PREF_POSTUPDATE);
+    let prefHasUserValue = Services.prefs.prefHasUserValue(PREF_POSTUPDATE);
     is(prefHasUserValue, false, "preference " + PREF_POSTUPDATE +
        " shouldn't have a user value");
   }

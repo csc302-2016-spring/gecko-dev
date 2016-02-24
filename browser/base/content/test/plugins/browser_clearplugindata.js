@@ -57,7 +57,7 @@ add_task(function* () {
   sanitizer = new Sanitizer();
   sanitizer.ignoreTimespan = false;
   sanitizer.prefDomain = "privacy.cpd.";
-  let itemPrefs = gPrefService.getBranch(sanitizer.prefDomain);
+  let itemPrefs = Services.prefs.getBranch(sanitizer.prefDomain);
   itemPrefs.setBoolPref("history", false);
   itemPrefs.setBoolPref("downloads", false);
   itemPrefs.setBoolPref("cache", false);

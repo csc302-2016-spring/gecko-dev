@@ -217,7 +217,7 @@ function test() {
   gBrowser.addTabsProgressListener(gTabsListener);
 
   // Temporary disable history, so we won't record pages navigation.
-  gPrefService.setBoolPref(ENABLE_HISTORY_PREF, false);
+  Services.prefs.setBoolPref(ENABLE_HISTORY_PREF, false);
 
   // Open Library window.
   openLibrary(function (library) {
@@ -258,7 +258,7 @@ function runNextTest() {
 
     // Restore history.
     try {
-      gPrefService.clearUserPref(ENABLE_HISTORY_PREF);
+      Services.prefs.clearUserPref(ENABLE_HISTORY_PREF);
     } catch(ex) {}
 
     finish();

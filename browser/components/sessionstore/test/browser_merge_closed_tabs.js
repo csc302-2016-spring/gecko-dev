@@ -32,7 +32,7 @@ add_task(function () {
   }
 
   const maxTabsUndo = 4;
-  gPrefService.setIntPref("browser.sessionstore.max_tabs_undo", maxTabsUndo);
+  Services.prefs.setIntPref("browser.sessionstore.max_tabs_undo", maxTabsUndo);
 
   // Open a new window and restore it to an initial state.
   let win = yield promiseNewWindowLoaded({private: false});
@@ -64,7 +64,7 @@ add_task(function () {
   }
 
   // Clean up.
-  gPrefService.clearUserPref("browser.sessionstore.max_tabs_undo");
+  Services.prefs.clearUserPref("browser.sessionstore.max_tabs_undo");
   yield BrowserTestUtils.closeWindow(win);
 });
 

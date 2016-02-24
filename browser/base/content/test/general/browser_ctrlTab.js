@@ -1,5 +1,5 @@
 function test() {
-  gPrefService.setBoolPref("browser.ctrlTab.previews", true);
+  Services.prefs.setBoolPref("browser.ctrlTab.previews", true);
 
   gBrowser.addTab();
   gBrowser.addTab();
@@ -85,8 +85,8 @@ function test() {
   }
 
   // cleanup
-  if (gPrefService.prefHasUserValue("browser.ctrlTab.previews"))
-    gPrefService.clearUserPref("browser.ctrlTab.previews");
+  if (Services.prefs.prefHasUserValue("browser.ctrlTab.previews"))
+    Services.prefs.clearUserPref("browser.ctrlTab.previews");
 
   /* private utility functions */
 

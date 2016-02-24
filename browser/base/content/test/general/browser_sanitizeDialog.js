@@ -973,7 +973,7 @@ function* blankSlate() {
  *        Passed to is()
  */
 function boolPrefIs(aPrefName, aExpectedVal, aMsg) {
-  is(gPrefService.getBoolPref("privacy." + aPrefName), aExpectedVal, aMsg);
+  is(Services.prefs.getBoolPref("privacy." + aPrefName), aExpectedVal, aMsg);
 }
 
 /**
@@ -1016,7 +1016,7 @@ function* ensureDownloadsClearedState(aDownloadIDs, aShouldBeCleared) {
  *        Passed to is()
  */
 function intPrefIs(aPrefName, aExpectedVal, aMsg) {
-  is(gPrefService.getIntPref("privacy." + aPrefName), aExpectedVal, aMsg);
+  is(Services.prefs.getIntPref("privacy." + aPrefName), aExpectedVal, aMsg);
 }
 
 /**

@@ -13,7 +13,7 @@ function test() {
 
   // make sure that sessionstore.js can be forced to be created by setting
   // the interval pref to 0
-  gPrefService.setIntPref("browser.sessionstore.interval", 0);
+  Services.prefs.setIntPref("browser.sessionstore.interval", 0);
 
   const testURL = "http://mochi.test:8888/browser/" +
     "browser/components/sessionstore/test/browser_423132_sample.html";
@@ -63,8 +63,8 @@ function test() {
           is(cookie.path, cookie2.path, "cookie path successfully restored");
 
           // clean up
-          if (gPrefService.prefHasUserValue("browser.sessionstore.interval"))
-            gPrefService.clearUserPref("browser.sessionstore.interval");
+          if (Services.prefs.prefHasUserValue("browser.sessionstore.interval"))
+            Services.prefs.clearUserPref("browser.sessionstore.interval");
           cs.removeAll();
           BrowserTestUtils.closeWindow(newWin).then(finish);
         };

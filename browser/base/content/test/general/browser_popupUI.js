@@ -1,11 +1,11 @@
 function test() {
   waitForExplicitFinish();
-  gPrefService.setBoolPref("dom.disable_open_during_load", false);
+  Services.prefs.setBoolPref("dom.disable_open_during_load", false);
 
   var browser = gBrowser.selectedBrowser;
   BrowserTestUtils.browserLoaded(browser).then(() => {
-    if (gPrefService.prefHasUserValue("dom.disable_open_during_load"))
-      gPrefService.clearUserPref("dom.disable_open_during_load");
+    if (Services.prefs.prefHasUserValue("dom.disable_open_during_load"))
+      Services.prefs.clearUserPref("dom.disable_open_during_load");
 
     findPopup();
   });
