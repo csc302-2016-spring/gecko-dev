@@ -211,7 +211,10 @@ function sendString(aStr, aWindow) {
  * No modifiers are handled at this point.
  */
 function sendKey(aKey, aWindow) {
-  var keyName = "VK_" + aKey.toUpperCase();
+  var keyName = aKey;
+  if(!aKey.startsWith("VK_")){
+    keyName = "VK_" + aKey.toUpperCase();
+  } 
   synthesizeKey(keyName, { shiftKey: false }, aWindow);
 }
 
