@@ -1,8 +1,7 @@
 commit 6ee21f2bd3988c683b84178b063b0763e945087b
 Author: Kai Chun Shih <kaichun.shih@utoronto.ca>
 Date:   Wed Feb 24 00:19:25 2016 -0500
-
-    Increase the window width by 2 em
+Subject: [PATCH] Bug 1235305 - Increase the window width by 2 em
 
 diff --git a/browser/locales/en-US/chrome/browser/preferences/blocklists.dtd b/browser/locales/en-US/chrome/browser/preferences/blocklists.dtd
 index 837123a..1f04ad7 100644
