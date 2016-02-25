@@ -171,15 +171,6 @@
     background-color: #ebebeb;
   }
 
-  notification[value="loop-sharing-notification"] .notification-inner {
-    color: #fff;
-    padding: 0;
-  }
-
-  notification[value="loop-sharing-notification"].paused .notification-inner {
-    color: #00a9dc;
-  }
-
   notification[value="loop-sharing-notification"] .notification-button {
     -moz-appearance: none;
     background-color: #fff;
