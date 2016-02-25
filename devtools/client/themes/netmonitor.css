@@ -374,7 +374,7 @@
 /* SideMenuWidget */
 #network-table .side-menu-widget-empty-text,
 #network-table .side-menu-widget-container {
-  background-color: var(--theme-body-background);
+  background-color: var(--theme-toolbar-background);
 }
 
 #network-table .side-menu-widget-item {

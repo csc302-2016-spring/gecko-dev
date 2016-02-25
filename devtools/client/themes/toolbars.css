@@ -118,7 +118,21 @@
   border-width: 1px;
   border-style: solid;
   min-height: 32px;
-  background-color: var(--theme-toolbar-background);
+  background-color:
+}
+
+.theme-light .devtools-button[standalone],
+.theme-light .devtools-button[data-standalone],
+.theme-light .devtools-toolbarbutton[standalone],
+.theme-light .devtools-toolbarbutton[data-standalone]{
+    background-color: rgba(170, 170, 170, .2);
+}
+
+.theme-dark .devtools-button[standalone],
+.theme-dark .devtools-button[data-standalone],
+.theme-dark .devtools-toolbarbutton[standalone],
+.theme-dark .devtools-toolbarbutton[data-standalone]{
+    background-color: var(--theme-tab-toolbar-background);
 }
 
 .devtools-toolbarbutton[standalone], .devtools-toolbarbutton[data-standalone] {
@@ -205,6 +219,8 @@
   opacity: 0.8;
 }
 
+
+
 .devtools-button:hover:empty::before,
 .devtools-button[checked]:empty::before,
 .devtools-button[open]:empty::before,
@@ -233,10 +249,11 @@
 .theme-light #toolbox-buttons .devtools-toolbarbutton[text-as-image] {
   background-color: rgba(170, 170, 170, .2); /* Splitter */
 }
+
 .theme-dark .devtools-toolbarbutton[label]:not([text-as-image]):not([type=menu-button]),
 .theme-dark .devtools-toolbarbutton[data-text-only],
 .theme-dark #toolbox-buttons .devtools-toolbarbutton[text-as-image] {
-  background-color: rgba(0, 0, 0, .2); /* Splitter */
+  background-color: var(--theme-tab-toolbar-background);
 }
 
 /* Text-only button states */
