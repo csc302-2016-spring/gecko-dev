@@ -3479,6 +3479,19 @@ var gDetailView = {
   onInstallCancelled: function gDetailView_onInstallCancelled(aInstall) {
     if (aInstall.addon.id == this._addon.id)
       gViewController.popState();
+  },
+
+  onInstallEnded: function gDetailView_onInstallEnded(aInstall, aAddon) {
+    var self = this;
+    this._loadingTimer = setTimeout(function loadTimeOutTimer() {
+      self.node.setAttribute("loading-extended", true);
+    }, LOADING_MSG_DELAY);
+
+    AddonManager.getAddonByID(aAddon.id, function onInstallEnded_getAddonByID(aAddon) {
+      if (aAddon) {
+        self._updateView(aAddon, false);
+      }
+    });
   }
 };
 
