@@ -1,0 +1,38 @@
+commit 0190ffdc136de2d435025e3ca909ed36c0a943fd
+Author: cancheta93 <c-ancheta@live.com>
+Date:   Thu Feb 25 17:35:42 2016 -0500
+
+    Bug 718487 - Added condition checking if aKey already has 'VK' prefix. Also added a new test to ensure implementation passes.
+
+diff --git a/testing/mochitest/tests/Harness_sanity/test_sanityEventUtils.html b/testing/mochitest/tests/Harness_sanity/test_sanityEventUtils.html
+index 07efaaf..8286837 100644
+--- a/testing/mochitest/tests/Harness_sanity/test_sanityEventUtils.html
++++ b/testing/mochitest/tests/Harness_sanity/test_sanityEventUtils.html
+@@ -60,6 +60,11 @@ function starttest() {
+       $("testKeyEvent").focus();
+       sendKey("DOWN");
+       is(check, true, "sendKey should dispatch keyPress");
++
++      check = false;
++      $("testKeyEvent").focus();
++      sendKey("VK_DOWN");
++      is(check, true, "sendKey should dispatch keyPress");
+     
+       /* test synthesizeMouse* */
+       //focus trick enables us to run this in iframes
+diff --git a/testing/mochitest/tests/SimpleTest/EventUtils.js b/testing/mochitest/tests/SimpleTest/EventUtils.js
+index 06f115c..c9ee014 100644
+--- a/testing/mochitest/tests/SimpleTest/EventUtils.js
++++ b/testing/mochitest/tests/SimpleTest/EventUtils.js
+@@ -211,7 +211,10 @@ function sendString(aStr, aWindow) {
+  * No modifiers are handled at this point.
+  */
+ function sendKey(aKey, aWindow) {
+-  var keyName = "VK_" + aKey.toUpperCase();
++  var keyName = aKey;
++  if(!aKey.startsWith("VK_")){
++    keyName = "VK_" + aKey.toUpperCase();
++  } 
+   synthesizeKey(keyName, { shiftKey: false }, aWindow);
+ }
+ 
