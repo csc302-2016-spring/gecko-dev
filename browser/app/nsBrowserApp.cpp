@@ -287,6 +287,10 @@ int main(int argc, char* argv[])
 {
   mozilla::TimeStamp start = mozilla::TimeStamp::Now();
 
+
+fprintf(stdout, "Hello Derek g3derekc\n");
+
+
 #ifdef XP_MACOSX
   TriggerQuirks();
 #endif
