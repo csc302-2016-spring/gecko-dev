@@ -2071,7 +2071,6 @@ var gDiscoverView = {
       try {
         this.homepageURL = Services.io.newURI(aURL, null, null);
       } catch (e) {
-        alert("got it!!!");
         this.showError();
         //notifyInitialized();
         //return;
