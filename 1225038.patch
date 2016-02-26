@@ -1,0 +1,192 @@
+# HG changeset patch
+# User L-tommy <tommytsengli@hotmail.com>
+
+Bug 1225038 - Removed obsolete functions from models.js and HTML code in index.html, deleted models_test.js
+
+
+diff --git a/browser/extensions/loop/content/shared/js/models.js b/browser/extensions/loop/content/shared/js/models.js
+index ef2b71e..b0604f7 100644
+--- a/browser/extensions/loop/content/shared/js/models.js
++++ b/browser/extensions/loop/content/shared/js/models.js
+@@ -4,7 +4,7 @@
+ 
+ var loop = loop || {};
+ loop.shared = loop.shared || {};
+-loop.shared.models = (function(l10n) {
++loop.shared.models = (function() {
+   "use strict";
+ 
+   /**
+@@ -24,71 +24,11 @@ loop.shared.models = (function(l10n) {
+    * Notification collection
+    */
+   var NotificationCollection = Backbone.Collection.extend({
+-    model: NotificationModel,
+-
+-    /**
+-     * Adds a warning notification to the stack and renders it.
+-     *
+-     * @return {String} message
+-     */
+-    warn: function(message) {
+-      this.add({ level: "warning", message: message });
+-    },
+-
+-    /**
+-     * Adds a l10n warning notification to the stack and renders it.
+-     *
+-     * @param  {String} messageId L10n message id
+-     */
+-    warnL10n: function(messageId) {
+-      this.warn(l10n.get(messageId));
+-    },
+-
+-    /**
+-     * Adds an error notification to the stack and renders it.
+-     *
+-     * @return {String} message
+-     */
+-    error: function(message) {
+-      this.add({ level: "error", message: message });
+-    },
+-
+-    /**
+-     * Adds a l10n error notification to the stack and renders it.
+-     *
+-     * @param  {String} messageId L10n message id
+-     * @param  {Object} [l10nProps] An object with variables to be interpolated
+-     *                  into the translation. All members' values must be
+-     *                  strings or numbers.
+-     */
+-    errorL10n: function(messageId, l10nProps) {
+-      this.error(l10n.get(messageId, l10nProps));
+-    },
+-
+-    /**
+-     * Adds a success notification to the stack and renders it.
+-     *
+-     * @return {String} message
+-     */
+-    success: function(message) {
+-      this.add({ level: "success", message: message });
+-    },
+-
+-    /**
+-     * Adds a l10n success notification to the stack and renders it.
+-     *
+-     * @param  {String} messageId L10n message id
+-     * @param  {Object} [l10nProps] An object with variables to be interpolated
+-     *                  into the translation. All members' values must be
+-     *                  strings or numbers.
+-     */
+-    successL10n: function(messageId, l10nProps) {
+-      this.success(l10n.get(messageId, l10nProps));
+-    }
++    model: NotificationModel
+   });
+ 
+   return {
+     NotificationCollection: NotificationCollection,
+     NotificationModel: NotificationModel
+   };
+-})(navigator.mozL10n || document.mozL10n);
++})();
+diff --git a/browser/extensions/loop/test/shared/index.html b/browser/extensions/loop/test/shared/index.html
+index 820c91d..7feae99 100644
+--- a/browser/extensions/loop/test/shared/index.html
++++ b/browser/extensions/loop/test/shared/index.html
+@@ -56,7 +56,6 @@
+   <script src="../../content/shared/js/linkifiedTextView.js"></script>
+ 
+   <!-- Test scripts -->
+-  <script src="models_test.js"></script>
+   <script src="mixins_test.js"></script>
+   <script src="utils_test.js"></script>
+   <script src="crypto_test.js"></script>
+diff --git a/browser/extensions/loop/test/shared/models_test.js b/browser/extensions/loop/test/shared/models_test.js
+deleted file mode 100644
+index ec7e7c8..0000000
+--- a/browser/extensions/loop/test/shared/models_test.js
++++ /dev/null
+@@ -1,80 +0,0 @@
+-/* This Source Code Form is subject to the terms of the Mozilla Public
+- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+-
+-describe("loop.shared.models", function() {
+-  "use strict";
+-
+-  var expect = chai.expect;
+-  var l10n = navigator.mozL10n;
+-  var sharedModels = loop.shared.models;
+-  var sandbox;
+-
+-  beforeEach(function() {
+-    sandbox = sinon.sandbox.create();
+-  });
+-
+-  afterEach(function() {
+-    sandbox.restore();
+-  });
+-
+-  describe("NotificationCollection", function() {
+-    var collection;
+-
+-    beforeEach(function() {
+-      collection = new sharedModels.NotificationCollection();
+-      sandbox.stub(l10n, "get", function(x, y) {
+-        return "translated:" + x + (y ? ":" + y : "");
+-      });
+-    });
+-
+-    describe("#warn", function() {
+-      it("should add a warning notification to the stack", function() {
+-        collection.warn("watch out");
+-
+-        expect(collection).to.have.length.of(1);
+-        expect(collection.at(0).get("level")).eql("warning");
+-        expect(collection.at(0).get("message")).eql("watch out");
+-      });
+-    });
+-
+-    describe("#warnL10n", function() {
+-      it("should warn using a l10n string id", function() {
+-        collection.warnL10n("fakeId");
+-
+-        expect(collection).to.have.length.of(1);
+-        expect(collection.at(0).get("level")).eql("warning");
+-        expect(collection.at(0).get("message")).eql("translated:fakeId");
+-      });
+-    });
+-
+-    describe("#error", function() {
+-      it("should add an error notification to the stack", function() {
+-        collection.error("wrong");
+-
+-        expect(collection).to.have.length.of(1);
+-        expect(collection.at(0).get("level")).eql("error");
+-        expect(collection.at(0).get("message")).eql("wrong");
+-      });
+-    });
+-
+-    describe("#errorL10n", function() {
+-      it("should notify an error using a l10n string id", function() {
+-        collection.errorL10n("fakeId");
+-
+-        expect(collection).to.have.length.of(1);
+-        expect(collection.at(0).get("level")).eql("error");
+-        expect(collection.at(0).get("message")).eql("translated:fakeId");
+-      });
+-
+-      it("should notify an error using a l10n string id + l10n properties",
+-        function() {
+-          collection.errorL10n("fakeId", "fakeProp");
+-
+-          expect(collection).to.have.length.of(1);
+-          expect(collection.at(0).get("level")).eql("error");
+-          expect(collection.at(0).get("message")).eql("translated:fakeId:fakeProp");
+-      });
+-    });
+-  });
+-});
+
