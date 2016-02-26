@@ -21,7 +21,7 @@ public class testStateWhileLoading extends UITest {
 
         NavigationHelper.enterAndLoadUrl(mStringHelper.ROBOCOP_LINK_TO_SLOW_LOADING);
 
-        GeckoClickHelper.openCentralizedLinkInNewTab();
+        GeckoClickHelper.openCentralizedLinkInNewTab(mStringHelper);
 
         WaitHelper.waitForPageLoad(new Runnable() {
             @Override

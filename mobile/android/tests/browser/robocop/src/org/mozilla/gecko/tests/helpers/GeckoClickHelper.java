@@ -31,11 +31,11 @@ public class GeckoClickHelper {
      * The link should be positioned at the top of the page, at least 60px high and
      * aligned to the middle.
      */
-    public static void openCentralizedLinkInNewTab() {
+    public static void openCentralizedLinkInNewTab(StringHelper stringHelper) {
         openLinkContextMenu();
 
         // Click on "Open Link in New Tab"
-        sSolo.clickOnText(StringHelper.get().CONTEXT_MENU_ITEMS_IN_NORMAL_TAB[0]);
+        sSolo.clickOnText(stringHelper.CONTEXT_MENU_ITEMS_IN_NORMAL_TAB[0]);
     }
 
     private static void openLinkContextMenu() {
