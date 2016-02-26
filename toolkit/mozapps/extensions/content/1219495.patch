@@ -1,0 +1,21 @@
+# HG changeset patch
+# User Faith Magcalas <doobydoobydoobah@gmail.com>
+
+Bug 1219495 - Change condition of if statement to prevent selectedPanel from switching to _browser from _error.
+
+
+diff --git a/toolkit/mozapps/extensions/content/extensions.js b/toolkit/mozapps/extensions/content/extensions.js
+index 1c1fa5f..98bb1c7 100644
+--- a/toolkit/mozapps/extensions/content/extensions.js
++++ b/toolkit/mozapps/extensions/content/extensions.js
+@@ -2245,7 +2245,8 @@ var gDiscoverView = {
+                         Ci.nsIWebProgressListener.STATE_IS_REQUEST |
+                         Ci.nsIWebProgressListener.STATE_TRANSFERRING;
+     // Once transferring begins show the content
+-    if (aStateFlags & transferStart)
++    if ((aStateFlags & transferStart) && 
++        (this.node.selectedPanel != this._error))
+       this.node.selectedPanel = this._browser;
+ 
+     // Only care about the network events
+
