@@ -2071,18 +2071,23 @@ var gDiscoverView = {
       try {
         this.homepageURL = Services.io.newURI(aURL, null, null);
       } catch (e) {
+        alert("got it!!!");
         this.showError();
-        notifyInitialized();
-        return;
+        //notifyInitialized();
+        //return;
       }
 
       this._browser.homePage = this.homepageURL.spec;
       this._browser.addProgressListener(this);
 
-      if (this.loaded)
+      console.log("1st...");
+      console.log(this.loaded)
+      if (this.loaded){
+        console.log("2nd..");
         this._loadURL(this.homepageURL.spec, false, notifyInitialized);
-      else
+      }else{
         notifyInitialized();
+      }
     }
 
     if (Services.prefs.getBoolPref(PREF_GETADDONS_CACHE_ENABLED) == false) {
@@ -2173,18 +2178,26 @@ var gDiscoverView = {
 
   _loadURL: function(aURL, aKeepHistory, aCallback) {
     if (this._browser.currentURI.spec == aURL) {
-      if (aCallback)
+      if (aCallback){
+        console.log("line: 2181 -- aCallback");
         aCallback();
+      }
+      console.log("line: 2184 -- ....");
       return;
     }
 
-    if (aCallback)
+    if (aCallback){
+      console.log("line: 2189 -- ");
       this._loadListeners.push(aCallback);
+    }
 
     var flags = 0;
-    if (!aKeepHistory)
+    if (!aKeepHistory){
+      console.log("line: 2195 -- ");
       flags |= Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY;
-
+    }
+    console.log("loadding..." + aURL);
+    //console.log(flags);
     this._browser.loadURIWithFlags(aURL, flags);
   },
 
@@ -2270,7 +2283,11 @@ var gDiscoverView = {
     const NS_ERROR_PARSED_DATA_CACHED = 0x805D0021;
     if (!(Components.isSuccessCode(aStatus) || aStatus == NS_ERROR_PARSED_DATA_CACHED) ||
         (aRequest && aRequest instanceof Ci.nsIHttpChannel && !aRequest.requestSucceeded)) {
+      
+      console.log("only get here when there is no internet connection");
+      alert("No internet Connection was found");
       this.showError();
+      
     } else {
       // Got a successful load, make sure the browser is visible
       this.node.selectedPanel = this._browser;
