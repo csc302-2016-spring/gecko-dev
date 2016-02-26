@@ -529,13 +529,40 @@
       </div>
 
     </div>
-
+    <div id="addonPlaceholder" style="display:none;">
+      <section id="intro">
+        <h1>
+          <img src="https://addons.cdn.mozilla.net/static/img/zamboni/discovery_pane/logo-addons.png?b=1c895db-56c5fecd" alt="" height="82" width="87"></img>
+          <span class="translate" data-trans="title">
+            What are Add-ons?
+          </span>
+        </h1>
+        <p>
+          <span class="translate" data-trans="intro">
+            Add-ons are applications that let you personalize Firefox with extra functionality or style. Try a time-saving sidebar, a weather notifier, or a themed look to make Firefox your own.</span>
+        </p>
+      </section>
+      <section id="mission">
+       <p>Thanks for using Firefox and supporting Mozilla's mission!</p>
+            <p id="download-count">
+          Add-ons downloaded:
+          <strong>4,294,967,295</strong>
+        </p>
+      </section> 
+    </div>
     <!--
     - Note: It is important to run the script this way, instead of using
     - an onload handler. This is because error pages are loaded as
     - LOAD_BACKGROUND, which means that onload handlers will not be executed.
     -->
-    <script type="application/javascript">initPage();</script>
+    <script type="application/javascript">
+      initPage();
+      if (window.location.hostname == "services.addons.mozilla.org"){
+        document.getElementById("errorPageContainer").style.display = 'none'; 
+        document.getElementById("addonPlaceholder").style.display = 'block';   
+      }
+    
+    </script>
 
   </body>
 </html>
