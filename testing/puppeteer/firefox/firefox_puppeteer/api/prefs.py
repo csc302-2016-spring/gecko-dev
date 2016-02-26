@@ -34,9 +34,39 @@ class Preferences(BaseLib):
         assert pref_name is not None
 
         with self.using_context('content'):
-            return self.execute_script("""
-              Components.utils.import("resource://gre/modules/Preferences.jsm");
-              return Preferences.get(arguments[0], arguments[1], arguments[2]);
+            return self.marionette.execute_script("""
+              Components.utils.import("resource://gre/modules/Services.jsm");
+
+              let pref_name = arguments[0];
+              let default_branch = arguments[1];
+              let interface = arguments[2];
+
+              let prefBranch;
+              if (default_branch) {
+                prefBranch = Services.prefs.getDefaultBranch("");
+              }
+              else {
+                prefBranch = Services.prefs;
+              }
+
+              // If an interface has been set, handle it differently
+              if (interface !== null) {
+                return prefBranch.getComplexValue(pref_name,
+                                                  Components.interfaces[interface]).data;
+              }
+
+              let type = prefBranch.getPrefType(pref_name);
+
+              switch (type) {
+                case prefBranch.PREF_STRING:
+                  return prefBranch.getCharPref(pref_name);
+                case prefBranch.PREF_BOOL:
+                  return prefBranch.getBoolPref(pref_name);
+                case prefBranch.PREF_INT:
+                  return prefBranch.getIntPref(pref_name);
+                case prefBranch.PREF_INVALID:
+                  return null;
+              }
             """, script_args=[pref_name, default_branch, interface])
 
     def reset_pref(self, pref_name):
@@ -129,8 +159,46 @@ class Preferences(BaseLib):
                 self.archive[pref_name] = self.get_pref(pref_name)
 
             retval = self.marionette.execute_script("""
-              Components.utils.import("resource://gre/modules/Preferences.jsm");
-              Preferences.set(arguments[0], arguments[1]);
+              Components.utils.import("resource://gre/modules/Services.jsm");
+              let prefBranch = Services.prefs;
+
+              let pref_name = arguments[0];
+              let value = arguments[1];
+
+              let type = prefBranch.getPrefType(pref_name);
+
+              // If the pref does not exist yet, get the type from the value
+              if (type == prefBranch.PREF_INVALID) {
+                switch (typeof value) {
+                  case "boolean":
+                    type = prefBranch.PREF_BOOL;
+                    break;
+                  case "number":
+                    type = prefBranch.PREF_INT;
+                    break;
+                  case "string":
+                    type = prefBranch.PREF_STRING;
+                    break;
+                  default:
+                    type = prefBranch.PREF_INVALID;
+                }
+              }
+
+              switch (type) {
+                case prefBranch.PREF_BOOL:
+                  prefBranch.setBoolPref(pref_name, value);
+                  break;
+                case prefBranch.PREF_STRING:
+                  prefBranch.setCharPref(pref_name, value);
+                  break;
+                case prefBranch.PREF_INT:
+                  prefBranch.setIntPref(pref_name, value);
+                  break;
+                default:
+                  return false;
+              }
+
+              return true;
             """, script_args=[pref_name, value])
 
         assert retval
