@@ -2248,7 +2248,7 @@ var gDiscoverView = {
                         Ci.nsIWebProgressListener.STATE_IS_REQUEST |
                         Ci.nsIWebProgressListener.STATE_TRANSFERRING;
     // Once transferring begins show the content
-    if (aStateFlags & transferStart)
+    if ((aStateFlags & transferStart) && (this.node.selectedPanel != this._error))
       this.node.selectedPanel = this._browser;
 
     // Only care about the network events
@@ -2275,9 +2275,9 @@ var gDiscoverView = {
         (aRequest && aRequest instanceof Ci.nsIHttpChannel && !aRequest.requestSucceeded)) {
       
       //------------------------------------------
-      if(!aRequest.requestSucceeded){
-        alert("<Make this alert more firendly>\nNo network Connection can be found");
-      }
+      //if(!aRequest.requestSucceeded){
+      // alert("network Connection can be found");
+      //}
       //------------------------------------------
       this.showError();
       
