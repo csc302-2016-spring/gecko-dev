@@ -374,17 +374,12 @@ public class StringHelper {
         DONT_RESTORE_QUIT = res.getString(R.string.pref_restore_quit);
     }
 
-    public static void initialize(Resources res) {
+    public static StringHelper initialize(Resources res) {
         if (instance != null) {
             throw new IllegalStateException(StringHelper.class.getSimpleName() + " already Initialized");
         }
-        instance = new StringHelper(res);
-    }
 
-    public static StringHelper get() {
-        if (instance == null) {
-            throw new IllegalStateException(StringHelper.class.getSimpleName() + " instance is not yet initialized. Use StringHelper.initialize(Resources) first.");
-        }
+        instance = new StringHelper(res);
         return instance;
     }
 
