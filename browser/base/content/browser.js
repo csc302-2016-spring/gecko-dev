@@ -817,8 +817,6 @@ function gKeywordURIFixup({ target: browser, data: fixupInfo }) {
 // load a URI or redirect it to the correct process.
 function _loadURIWithFlags(browser, uri, params) {
 
-
-  //alert("hello");
   if (!uri) {
     uri = "about:blank";
   }

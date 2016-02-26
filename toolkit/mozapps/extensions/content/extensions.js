@@ -2080,10 +2080,7 @@ var gDiscoverView = {
       this._browser.homePage = this.homepageURL.spec;
       this._browser.addProgressListener(this);
 
-      console.log("1st...");
-      console.log(this.loaded)
       if (this.loaded){
-        console.log("2nd..");
         this._loadURL(this.homepageURL.spec, false, notifyInitialized);
       }else{
         notifyInitialized();
@@ -2179,25 +2176,19 @@ var gDiscoverView = {
   _loadURL: function(aURL, aKeepHistory, aCallback) {
     if (this._browser.currentURI.spec == aURL) {
       if (aCallback){
-        console.log("line: 2181 -- aCallback");
         aCallback();
       }
-      console.log("line: 2184 -- ....");
       return;
     }
 
     if (aCallback){
-      console.log("line: 2189 -- ");
       this._loadListeners.push(aCallback);
     }
 
     var flags = 0;
     if (!aKeepHistory){
-      console.log("line: 2195 -- ");
       flags |= Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY;
     }
-    console.log("loadding..." + aURL);
-    //console.log(flags);
     this._browser.loadURIWithFlags(aURL, flags);
   },
 
@@ -2284,8 +2275,11 @@ var gDiscoverView = {
     if (!(Components.isSuccessCode(aStatus) || aStatus == NS_ERROR_PARSED_DATA_CACHED) ||
         (aRequest && aRequest instanceof Ci.nsIHttpChannel && !aRequest.requestSucceeded)) {
       
-      console.log("only get here when there is no internet connection");
-      alert("No internet Connection was found");
+      //------------------------------------------
+      if(!aRequest.requestSucceeded){
+        alert("<Make this alert more firendly>\nNo network Connection can be found");
+      }
+      //------------------------------------------
       this.showError();
       
     } else {
