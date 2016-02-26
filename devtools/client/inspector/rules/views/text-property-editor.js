@@ -313,14 +313,14 @@ TextPropertyEditor.prototype = {
       this.element.classList.remove("ruleview-overridden");
     }
 
-    let name = this.committed.name;
+    let name = this.prop.name;
     this.nameSpan.textContent = name;
 
     // Combine the property's value and priority into one string for
     // the value.
     let store = this.rule.elementStyle.store;
     let val = store.userProperties.getProperty(this.rule.style, name,
-                                               this.committed.value);
+                                               this.prop.value);
     if (this.prop.priority) {
       val += " !" + this.prop.priority;
     }
