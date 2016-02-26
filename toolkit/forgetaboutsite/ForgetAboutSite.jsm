@@ -47,6 +47,8 @@ const Cu = Components.utils;
 this.ForgetAboutSite = {
   removeDataFromDomain: function CRH_removeDataFromDomain(aDomain)
   {
+  	let promises = [];
+    // History
     PlacesUtils.history.removePagesFromHost(aDomain, true);
 
     // Cache
@@ -76,8 +78,17 @@ this.ForgetAboutSite = {
              getService(Ci.nsICookieManager2);
     let enumerator = cm.getCookiesFromHost(aDomain);
     while (enumerator.hasMoreElements()) {
-      let cookie = enumerator.getNext().QueryInterface(Ci.nsICookie);
-      cm.remove(cookie.host, cookie.name, cookie.path, false);
+    	let promise = new Promise(resolve => {
+    		let cookie = enumerator.getNext().QueryInterface(Ci.nsICookie);
+	        try {
+	        	cm.remove(cookie.host, cookie.name, cookie.path, false);
+	            resolve();
+	        } catch (e) {
+	          // Ignore errors from the plugin, but resolve the promise
+	          resolve();
+	        }
+	      });
+	      promises.push(promise);
     }
 
     // EME
@@ -85,33 +96,41 @@ this.ForgetAboutSite = {
                getService(Ci.mozIGeckoMediaPluginChromeService);
     mps.forgetThisSite(aDomain);
 
-    // Plugin data
-    const phInterface = Ci.nsIPluginHost;
-    const FLAG_CLEAR_ALL = phInterface.FLAG_CLEAR_ALL;
-    let ph = Cc["@mozilla.org/plugin/host;1"].getService(phInterface);
-    let tags = ph.getPluginTags();
-    let promises = [];
-    for (let i = 0; i < tags.length; i++) {
-      let promise = new Promise(resolve => {
-        let tag = tags[i];
-        try {
-          ph.clearSiteData(tags[i], aDomain, FLAG_CLEAR_ALL, -1, function(rv) {
-            resolve();
-          });
-        } catch (e) {
-          // Ignore errors from the plugin, but resolve the promise
-          resolve();
-        }
-      });
-      promises.push(promise);
-    }
+	// Plugin data
+    Task.async(function*() {
+	    const phInterface = Ci.nsIPluginHost;
+	    const FLAG_CLEAR_ALL = phInterface.FLAG_CLEAR_ALL;
+	    let ph = Cc["@mozilla.org/plugin/host;1"].getService(phInterface);
+	    let tags = ph.getPluginTags();
+	    
+	    for (let i = 0; i < tags.length; i++) {
+	      let promise = new Promise(resolve => {
+	        let tag = tags[i];
+	        try {
+	          ph.clearSiteData(tags[i], aDomain, FLAG_CLEAR_ALL, -1, function(rv) {
+	            resolve();
+	          });
+	        } catch (e) {
+	          // Ignore errors from the plugin, but resolve the promise
+	          resolve();
+	        }
+	      });
+	      promises.push(promise);
+	  }
+    });
 
     // Downloads
-    Task.spawn(function*() {
-      let list = yield Downloads.getList(Downloads.ALL);
-      list.removeFinished(download => hasRootDomain(
-           NetUtil.newURI(download.source.url).host, aDomain));
-    }).then(null, Cu.reportError);
+    Task.async(function*() {
+      try{
+      	let list = yield Downloads.getList(Downloads.ALL);
+        list.removeFinished(download => hasRootDomain(
+           NetUtil.newURI(download.source.url).host, aDomain));     
+
+      } catch (ex){
+      	Cu.reportError("Exception thrown while clearing downloads: " +
+        ex.toString());
+      }
+    });
 
     // Passwords
     let lm = Cc["@mozilla.org/login-manager;1"].
@@ -152,6 +171,7 @@ this.ForgetAboutSite = {
         /* Ignore entry */
       }
     }
+
 
     // Offline Storages
     let qms = Cc["@mozilla.org/dom/quota-manager-service;1"].
@@ -199,6 +219,14 @@ this.ForgetAboutSite = {
       dump("Web Push may not be available.\n");
     }));
 
-    return Promise.all(promises);
+    for (let i = 0; i < promises.length; i++) {
+        try {
+          Promise.resolve(promises[i]);
+        } catch (ex) {
+      	  Cu.reportError("Exception thrown while resolving promises");
+        }
+    }
+
+    return;
   }
 };
