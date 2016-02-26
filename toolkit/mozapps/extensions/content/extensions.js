@@ -2072,8 +2072,8 @@ var gDiscoverView = {
         this.homepageURL = Services.io.newURI(aURL, null, null);
       } catch (e) {
         this.showError();
-        //notifyInitialized();
-        //return;
+        notifyInitialized();
+        return;
       }
 
       this._browser.homePage = this.homepageURL.spec;
