@@ -15,6 +15,7 @@ function PlacesTreeView(aFlatList, aOnOpenFlatContainer, aController) {
   this._selection = null;
   this._rootNode = null;
   this._rows = [];
+  this._nodeDetails = {};
   this._flatList = aFlatList;
   this._openContainerCallback = aOnOpenFlatContainer;
   this._controller = aController;
@@ -198,8 +199,10 @@ PlacesTreeView.prototype = {
       }
     }
 
-    if (row != -1)
+    if (row != -1) {
       this._rows[row] = aNode;
+      this._nodeDetails[aNode.uri + aNode.time + aNode.itemId] = row;
+    }
 
     return row;
   },
@@ -244,16 +247,24 @@ PlacesTreeView.prototype = {
 
     // If there's no container prior to the given row, it's a child of
     // the root node (remember: all containers are listed in the rows array).
-    if (!rowNode)
-      return this._rows[aRow] = this._rootNode.getChild(aRow);
+    if (!rowNode) {
+      let node = this._rootNode.getChild(aRow);
+      this._nodeDetails[node.uri + node.time + node.itemId] = aRow;
+      return this._rows[aRow] = node;
+    }
 
     // Unset elements may exist only in plain containers.  Thus, if the nearest
     // node is a container, it's the row's parent, otherwise, it's a sibling.
-    if (rowNode instanceof Ci.nsINavHistoryContainerResultNode)
-      return this._rows[aRow] = rowNode.getChild(aRow - row - 1);
+    if (rowNode instanceof Ci.nsINavHistoryContainerResultNode) {
+      let node = rowNode.getChild(aRow - row - 1);
+      this._nodeDetails[node.uri + node.time + node.itemId] = aRow;
+      return this._rows[aRow] = node;
+    }
 
     let [parent, parentRow] = this._getParentByChildRow(row);
-    return this._rows[aRow] = parent.getChild(aRow - parentRow - 1);
+    let node = parent.getChild(aRow - parentRow - 1);
+    this._nodeDetails[node.uri + node.time + node.itemId] = aRow;
+    return this._rows[aRow] = node;
   },
 
   /**
@@ -286,6 +297,11 @@ PlacesTreeView.prototype = {
     this._rows = this._rows.splice(0, aFirstChildRow)
                      .concat(newElements, this._rows);
 
+    for (let i = aFirstChildNode; i < this._rows.length; i++) {
+      let node = this._rows[i];
+      this._nodeDetails[node.uri + node.time + node.itemId] = i;
+    }
+
     if (this._isPlainContainer(aContainer))
       return cc;
 
@@ -306,12 +322,16 @@ PlacesTreeView.prototype = {
           // Remove the element for the filtered separator.
           // Notice that the rows array was initially resized to include all
           // children.
+          let removedNode = this._rows[row];
+          delete this._nodeDetails[removedNode.uri + removedNode.time + removedNode.itemId];
           this._rows.splice(row, 1);
+          
           continue;
         }
       }
 
       this._rows[row] = curChild;
+      this._nodeDetails[curChild.uri + curChild.time + curChild.itemId] = row;
       rowsInserted++;
 
       // Recursively do containers.
@@ -428,15 +448,7 @@ PlacesTreeView.prototype = {
       return this._getRowForNode(aOldNode, true);
     }
 
-    // There's a broken edge case here.
-    // If a visit appears in two queries, and the second one was
-    // the old node, we'll select the first one after refresh.  There's
-    // nothing we could do about that, because aOldNode.parent is
-    // gone by the time invalidateContainer is called.
-    let newNode = aUpdatedContainer.findNodeByDetails(aOldNode.uri,
-                                                      aOldNode.time,
-                                                      aOldNode.itemId,
-                                                      true);
+    let newNode = this._nodeDetails[aOldNode.uri + aOldNode.time + aOldNode.itemId];
     if (!newNode)
       return -1;
 
@@ -649,6 +661,10 @@ PlacesTreeView.prototype = {
     }
 
     this._rows.splice(row, 0, aNode);
+    for (let i = 0; i < this._rows.length; i++) {
+      let node = this._rows[i];
+      this._nodeDetails[node.uri + node.time + node.itemId] = i;
+    }    
     this._tree.rowCountChanged(row, 1);
 
     if (PlacesUtils.nodeIsContainer(aNode) &&
@@ -700,6 +716,11 @@ PlacesTreeView.prototype = {
     // Remove the node and its children, if any.
     let count = this._countVisibleRowsForNodeAtRow(oldRow);
     this._rows.splice(oldRow, count);
+    for (let i = oldRow; i < this._rows.length; i++) {
+      let node = this._rows[i];
+      this._nodeDetails[node.uri + node.time + node.itemId] = i;
+    }    
+
     this._tree.rowCountChanged(oldRow, -count);
 
     // Redraw the parent if its twisty state has changed.
@@ -753,6 +774,11 @@ PlacesTreeView.prototype = {
 
     // Remove node and its children, if any, from the old position.
     this._rows.splice(oldRow, count);
+    for (let i = 0; i < this._rows.length; i++) {
+      let node = this._rows[i];
+      this._nodeDetails[node.uri + node.time + node.itemId] = i;
+    }    
+
     this._tree.rowCountChanged(oldRow, -count);
 
     // Insert the node into the new position.
@@ -916,6 +942,7 @@ PlacesTreeView.prototype = {
       // If the root node is now closed, the tree is empty.
       if (!this._rootNode.containerOpen) {
         this._rows = [];
+        this._nodeDetails = {};
         if (replaceCount)
           this._tree.rowCountChanged(startReplacement, -replaceCount);
 
@@ -943,6 +970,10 @@ PlacesTreeView.prototype = {
 
     // First remove the old elements
     this._rows.splice(startReplacement, replaceCount);
+    for (let i = 0; i < this._rows.length; i++) {
+      let node = this._rows[i];
+      this._nodeDetails[node.uri + node.time + node.itemId] = i;
+    }
 
     // If the container is now closed, we're done.
     if (!aContainer.containerOpen) {
