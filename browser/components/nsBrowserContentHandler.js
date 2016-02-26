@@ -34,13 +34,9 @@ const nsIDOMWindow           = Components.interfaces.nsIDOMWindow;
 const nsIFileURL             = Components.interfaces.nsIFileURL;
 const nsIInterfaceRequestor  = Components.interfaces.nsIInterfaceRequestor;
 const nsINetUtil             = Components.interfaces.nsINetUtil;
-const nsIPrefBranch          = Components.interfaces.nsIPrefBranch;
 const nsIPrefLocalizedString = Components.interfaces.nsIPrefLocalizedString;
 const nsISupportsString      = Components.interfaces.nsISupportsString;
-const nsIURIFixup            = Components.interfaces.nsIURIFixup;
 const nsIWebNavigation       = Components.interfaces.nsIWebNavigation;
-const nsIWindowMediator      = Components.interfaces.nsIWindowMediator;
-const nsIWindowWatcher       = Components.interfaces.nsIWindowWatcher;
 const nsIWebNavigationInfo   = Components.interfaces.nsIWebNavigationInfo;
 const nsICommandLineValidator = Components.interfaces.nsICommandLineValidator;
 
@@ -59,8 +55,7 @@ function shouldLoadURI(aURI) {
 
 function resolveURIInternal(aCmdLine, aArgument) {
   var uri = aCmdLine.resolveURI(aArgument);
-  var urifixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
-                           .getService(nsIURIFixup);
+  var urifixup = Services.uriFixup;
 
   if (!(uri instanceof nsIFileURL)) {
     return urifixup.createFixupURI(aArgument,
@@ -181,8 +176,7 @@ function getPostUpdateOverridePage(defaultOverridePage) {
 const NO_EXTERNAL_URIS = 1;
 
 function openWindow(parent, url, target, features, args, noExternalArgs) {
-  var wwatch = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                         .getService(nsIWindowWatcher);
+  var wwatch = Services.ww;
 
   if (noExternalArgs == NO_EXTERNAL_URIS) {
     // Just pass in the defaultArgs directly
@@ -243,8 +237,7 @@ function openPreferences() {
 
   sa.AppendElement(wuri);
 
-  var wwatch = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                         .getService(nsIWindowWatcher);
+  var wwatch = Services.ww;
 
   wwatch.openWindow(null, gBrowserContentHandler.chromeURL,
                     "_blank",
@@ -253,9 +246,7 @@ function openPreferences() {
 }
 
 function getMostRecentWindow(aType) {
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(nsIWindowMediator);
-  return wm.getMostRecentWindow(aType);
+  return Services.wm.getMostRecentWindow(aType);
 }
 
 function logSystemBasedSearch(engine) {
@@ -286,8 +277,7 @@ function doSearch(searchTerm, cmdLine) {
   // XXXbsmedberg: use handURIToExistingBrowser to obey tabbed-browsing
   // preferences, but need nsIBrowserDOMWindow extensions
 
-  var wwatch = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                         .getService(nsIWindowWatcher);
+  var wwatch = Services.ww;
 
   return wwatch.openWindow(null, gBrowserContentHandler.chromeURL,
                            "_blank",
@@ -318,8 +308,7 @@ nsBrowserContentHandler.prototype = {
       return this.mChromeURL;
     }
 
-    var prefb = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(nsIPrefBranch);
+    var prefb = Services.prefs;
     this.mChromeURL = prefb.getCharPref("browser.chromeURL");
 
     return this.mChromeURL;
@@ -494,8 +483,7 @@ nsBrowserContentHandler.prototype = {
   /* nsIBrowserHandler */
 
   get defaultArgs() {
-    var prefb = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(nsIPrefBranch);
+    var prefb = Services.prefs;
 
     if (!gFirstWindow) {
       gFirstWindow = true;
@@ -747,8 +735,7 @@ nsDefaultCommandLineHandler.prototype = {
       if (!this._haveProfile) {
         try {
           // This will throw when a profile has not been selected.
-          var fl = Components.classes["@mozilla.org/file/directory_service;1"]
-                             .getService(Components.interfaces.nsIProperties);
+          var fl = Services.dirsvc;
           var dir = fl.get("ProfD", Components.interfaces.nsILocalFile);
           this._haveProfile = true;
         }
