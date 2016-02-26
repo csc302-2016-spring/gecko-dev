@@ -818,7 +818,7 @@ function gKeywordURIFixup({ target: browser, data: fixupInfo }) {
 function _loadURIWithFlags(browser, uri, params) {
 
 
-  alert("hello");
+  //alert("hello");
   if (!uri) {
     uri = "about:blank";
   }
