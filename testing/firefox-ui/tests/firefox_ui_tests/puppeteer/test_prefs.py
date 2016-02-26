@@ -2,15 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#The import and path inserts are strictly for testing on my local machine.
-import sys
-sys.path.insert(0, '/Users/johnibrahim/Desktop/CSC302/' \
-    'Firefox/gecko-dev/testing/marionette/driver/')
-
-sys.path.insert(0, '/Users/johnibrahim/Desktop/CSC302/' \
-    'Firefox/gecko-dev/testing/puppeteer/firefox/')
-
-
 from marionette_driver.errors import MarionetteException
 
 from firefox_puppeteer.testcases import FirefoxTestCase
