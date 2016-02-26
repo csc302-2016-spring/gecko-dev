@@ -1,0 +1,25 @@
+commit b7938ebaf080bfdd888f046c0e7a68f2fee115a7
+Author: Luke <lucasbaldi@gmail.com>
+Date:   Fri Feb 26 16:16:40 2016 -0500
+
+    alarm NaN check, and value check
+
+diff --git a/dom/alarm/AlarmsManager.js b/dom/alarm/AlarmsManager.js
+index 2550ea0..ca5b268 100644
+--- a/dom/alarm/AlarmsManager.js
++++ b/dom/alarm/AlarmsManager.js
+@@ -53,6 +53,14 @@ AlarmsManager.prototype = {
+       throw Components.results.NS_ERROR_INVALID_ARG;
+     }
+ 
++    if ((aDate instanceof Date) && aDate.getTime().isNaN()) {
++        throw Components.results.NS_ERROR_INVALID_ARG;
++    }
++
++    if (!(aDate instanceof Date) && aDate >0){
++         throw Components.results.NS_ERROR_INVALID_ARG;
++    }
++
+     let isIgnoreTimezone = true;
+ 
+     switch (aRespectTimezone) {

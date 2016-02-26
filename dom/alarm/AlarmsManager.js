@@ -53,6 +53,14 @@ AlarmsManager.prototype = {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
 
+    if ((aDate instanceof Date) && aDate.getTime().isNaN()) {
+        throw Components.results.NS_ERROR_INVALID_ARG;
+    }
+
+    if (!(aDate instanceof Date) && aDate >0){
+         throw Components.results.NS_ERROR_INVALID_ARG;
+    }
+
     let isIgnoreTimezone = true;
 
     switch (aRespectTimezone) {

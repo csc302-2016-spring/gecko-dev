@@ -1,0 +1,18 @@
+commit 9d028c6f1ad8cb6c77e960a25c48187b69422fca
+Author: Luke <lucasbaldi@gmail.com>
+Date:   Fri Jan 29 12:59:23 2016 -0500
+
+    hello world patch
+
+diff --git a/browser/app/nsBrowserApp.cpp b/browser/app/nsBrowserApp.cpp
+index fc65ce5..22746a6 100644
+--- a/browser/app/nsBrowserApp.cpp
++++ b/browser/app/nsBrowserApp.cpp
+@@ -285,6 +285,7 @@ sizeof(XPCOM_DLL) - 1))
+ 
+ int main(int argc, char* argv[])
+ {
++  printf("hello lucas!");
+   mozilla::TimeStamp start = mozilla::TimeStamp::Now();
+ 
+ #ifdef XP_MACOSX
