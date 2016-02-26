@@ -346,7 +346,7 @@ TextPropertyEditor.prototype = {
       bezierClass: "ruleview-bezier",
       filterSwatchClass: sharedSwatchClass + filterSwatchClass,
       filterClass: "ruleview-filter",
-      defaultColorType: !propDirty,
+      defaultColorType: true,
       urlClass: "theme-link",
       baseURI: this.sheetURI
     };
