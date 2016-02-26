@@ -158,6 +158,7 @@ class BasePopup {
       this.browser.removeEventListener("load", this, true);
       this.browser.removeEventListener("DOMTitleChanged", this, true);
       this.browser.removeEventListener("DOMWindowClose", this, true);
+      this.browser.removeEventListener("MozScrolledAreaChanged", this, true);
 
       this.viewNode.removeEventListener(this.DESTROY_EVENT, this);
 
@@ -191,6 +192,10 @@ class BasePopup {
 
       case "DOMTitleChanged":
         this.viewNode.setAttribute("aria-label", this.browser.contentTitle);
+        break;
+
+      case "MozScrolledAreaChanged":
+        this.resizeBrowser();
         break;
 
       case "load":
@@ -254,6 +259,7 @@ class BasePopup {
       this.browser.addEventListener("load", this, true);
       this.browser.addEventListener("DOMTitleChanged", this, true);
       this.browser.addEventListener("DOMWindowClose", this, true);
+      this.browser.addEventListener("MozScrolledAreaChanged", this, true);
     });
   }
 
