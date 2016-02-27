@@ -1,0 +1,32 @@
+commit 6af0d74f913c6a2f1a813330d7576af91b8c2b79
+Author: hojun0404 <hojunlim89@gmail.com>
+Date:   Fri Feb 26 14:27:15 2016 -0500
+
+    fixed bug -- final solution
+
+diff --git a/toolkit/mozapps/extensions/content/extensions.js b/toolkit/mozapps/extensions/content/extensions.js
+index 5feff4b..9ea923c 100644
+--- a/toolkit/mozapps/extensions/content/extensions.js
++++ b/toolkit/mozapps/extensions/content/extensions.js
+@@ -2248,7 +2248,7 @@ var gDiscoverView = {
+                         Ci.nsIWebProgressListener.STATE_IS_REQUEST |
+                         Ci.nsIWebProgressListener.STATE_TRANSFERRING;
+     // Once transferring begins show the content
+-    if (aStateFlags & transferStart)
++    if ((aStateFlags & transferStart) && (this.node.selectedPanel != this._error))
+       this.node.selectedPanel = this._browser;
+ 
+     // Only care about the network events
+@@ -2275,9 +2275,9 @@ var gDiscoverView = {
+         (aRequest && aRequest instanceof Ci.nsIHttpChannel && !aRequest.requestSucceeded)) {
+       
+       //------------------------------------------
+-      if(!aRequest.requestSucceeded){
+-        alert("<Make this alert more firendly>\nNo network Connection can be found");
+-      }
++      //if(!aRequest.requestSucceeded){
++      // alert("network Connection can be found");
++      //}
+       //------------------------------------------
+       this.showError();
+       

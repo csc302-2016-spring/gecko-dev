@@ -2079,10 +2079,11 @@ var gDiscoverView = {
       this._browser.homePage = this.homepageURL.spec;
       this._browser.addProgressListener(this);
 
-      if (this.loaded)
+      if (this.loaded){
         this._loadURL(this.homepageURL.spec, false, notifyInitialized);
-      else
+      }else{
         notifyInitialized();
+      }
     }
 
     if (Services.prefs.getBoolPref(PREF_GETADDONS_CACHE_ENABLED) == false) {
@@ -2173,18 +2174,20 @@ var gDiscoverView = {
 
   _loadURL: function(aURL, aKeepHistory, aCallback) {
     if (this._browser.currentURI.spec == aURL) {
-      if (aCallback)
+      if (aCallback){
         aCallback();
+      }
       return;
     }
 
-    if (aCallback)
+    if (aCallback){
       this._loadListeners.push(aCallback);
+    }
 
     var flags = 0;
-    if (!aKeepHistory)
+    if (!aKeepHistory){
       flags |= Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY;
-
+    }
     this._browser.loadURIWithFlags(aURL, flags);
   },
 
@@ -2245,7 +2248,7 @@ var gDiscoverView = {
                         Ci.nsIWebProgressListener.STATE_IS_REQUEST |
                         Ci.nsIWebProgressListener.STATE_TRANSFERRING;
     // Once transferring begins show the content
-    if (aStateFlags & transferStart)
+    if ((aStateFlags & transferStart) && (this.node.selectedPanel != this._error))
       this.node.selectedPanel = this._browser;
 
     // Only care about the network events
@@ -2270,7 +2273,14 @@ var gDiscoverView = {
     const NS_ERROR_PARSED_DATA_CACHED = 0x805D0021;
     if (!(Components.isSuccessCode(aStatus) || aStatus == NS_ERROR_PARSED_DATA_CACHED) ||
         (aRequest && aRequest instanceof Ci.nsIHttpChannel && !aRequest.requestSucceeded)) {
+      
+      //------------------------------------------
+      //if(!aRequest.requestSucceeded){
+      // alert("network Connection can be found");
+      //}
+      //------------------------------------------
       this.showError();
+      
     } else {
       // Got a successful load, make sure the browser is visible
       this.node.selectedPanel = this._browser;
