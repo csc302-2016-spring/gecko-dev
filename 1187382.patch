@@ -1,0 +1,50 @@
+commit e8b2085482798d839f02e1fcf653b241f84dbe0e
+Author: cornelialiu <cornelia.t.liu@gmail.com>
+Date:   Fri Feb 26 17:01:18 2016 -0600
+
+    Fixed Bug 1187382
+
+diff --git a/mobile/android/base/AppConstants.java.in b/mobile/android/base/AppConstants.java.in
+index df774bf..adb7a16 100644
+--- a/mobile/android/base/AppConstants.java.in
++++ b/mobile/android/base/AppConstants.java.in
+@@ -64,8 +64,7 @@ public class AppConstants {
+          * If our MAX_SDK_VERSION is lower than ICS, we must not be an ICS device.
+          * Otherwise, we need a range check.
+          */
+-	public static final boolean preM = MAX_SDK_VERSION < 23 ||
+-                (MIN_SDK_VERSION < 23 && Build.VERSION.SDK_INT < 23 && !Build.VERSION.RELEASE.equals("M"));
++        public static final boolean preMarshmallow = MAX_SDK_VERSION < 23 || (MIN_SDK_VERSION < 23 && Build.VERSION.SDK_INT < 23 );
+         public static final boolean preLollipop = MAX_SDK_VERSION < 21 || (MIN_SDK_VERSION < 21 && Build.VERSION.SDK_INT < 21);
+         public static final boolean preJBMR2 = MAX_SDK_VERSION < 18 || (MIN_SDK_VERSION < 18 && Build.VERSION.SDK_INT < 18);
+         public static final boolean preJBMR1 = MAX_SDK_VERSION < 17 || (MIN_SDK_VERSION < 17 && Build.VERSION.SDK_INT < 17);
+diff --git a/mobile/android/base/java/org/mozilla/gecko/firstrun/FirstrunPagerConfig.java b/mobile/android/base/java/org/mozilla/gecko/firstrun/FirstrunPagerConfig.java
+index 545a7ba..4ebf8af 100644
+--- a/mobile/android/base/java/org/mozilla/gecko/firstrun/FirstrunPagerConfig.java
++++ b/mobile/android/base/java/org/mozilla/gecko/firstrun/FirstrunPagerConfig.java
+@@ -25,10 +25,10 @@ public class FirstrunPagerConfig {
+ 
+         // The "Import" feature is disabled on devices running Android M+ (Bug 1183559).
+         // Exclude these users from the experiment to add an "Import" panel.
+-        if (isInExperimentLocal(context, ONBOARDING_A) && AppConstants.Versions.preM) {
++        if (isInExperimentLocal(context, ONBOARDING_A) && AppConstants.Versions.preMarshmallow) {
+             panels.add(new FirstrunPanelConfig(WelcomePanel.class.getName(), WelcomePanel.TITLE_RES));
+             Telemetry.startUISession(TelemetryContract.Session.EXPERIMENT, ONBOARDING_A);
+-        } else if (isInExperimentLocal(context, ONBOARDING_B) && AppConstants.Versions.preM) {
++        } else if (isInExperimentLocal(context, ONBOARDING_B) && AppConstants.Versions.preMarshmallow) {
+             // Strings used for first run, pulled from existing strings.
+             panels.add(new FirstrunPanelConfig(ImportPanel.class.getName(), ImportPanel.TITLE_RES));
+             panels.add(new FirstrunPanelConfig(SyncPanel.class.getName(), SyncPanel.TITLE_RES));
+diff --git a/mobile/android/base/java/org/mozilla/gecko/preferences/AndroidImportPreference.java b/mobile/android/base/java/org/mozilla/gecko/preferences/AndroidImportPreference.java
+index 68dd86e..7e79bf7 100644
+--- a/mobile/android/base/java/org/mozilla/gecko/preferences/AndroidImportPreference.java
++++ b/mobile/android/base/java/org/mozilla/gecko/preferences/AndroidImportPreference.java
+@@ -28,7 +28,7 @@ class AndroidImportPreference extends MultiPrefMultiChoicePreference {
+     public static class Handler implements GeckoPreferences.PrefHandler {
+         public boolean setupPref(Context context, Preference pref) {
+             // Feature disabled on devices running Android M+ (Bug 1183559)
+-            return Versions.preM && Restrictions.isAllowed(context, Restrictable.IMPORT_SETTINGS);
++            return Versions.preMarshmallow && Restrictions.isAllowed(context, Restrictable.IMPORT_SETTINGS);
+         }
+ 
+         public void onChange(Context context, Preference pref, Object newValue) { }
