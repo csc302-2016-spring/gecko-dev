@@ -1,0 +1,19 @@
+commit 26db5deeca0a7f790b585dc86b8b3d1973ee0baf
+Author: Matthew Mcwaters <matt.mcwaters@mail.utoronto.ca>
+Date:   Thu Mar 3 01:09:20 2016 -0500
+
+    Finished bug fix
+
+diff --git a/toolkit/components/places/PlacesSearchAutocompleteProvider.jsm b/toolkit/components/places/PlacesSearchAutocompleteProvider.jsm
+index e46c1af..4f0c33f 100644
+--- a/toolkit/components/places/PlacesSearchAutocompleteProvider.jsm
++++ b/toolkit/components/places/PlacesSearchAutocompleteProvider.jsm
+@@ -242,7 +242,7 @@ this.PlacesSearchAutocompleteProvider = Object.freeze({
+     yield this.ensureInitialized();
+ 
+     return SearchAutocompleteProviderInternal.aliasMatches
+-                                             .find(m => m.alias == searchToken);
++                                             .find(m => m.alias.toUpperCase() == searchToken.toUpperCase());
+   }),
+ 
+   getDefaultMatch: Task.async(function* () {
