@@ -3,15 +3,14 @@
 
 // Test that we can incrementally fetch two subtrees in the same dominator tree
 // concurrently. This exercises the activeFetchRequestCount machinery.
+"use strict";
 
 const {
-  snapshotState: states,
   dominatorTreeState,
   viewState,
 } = require("devtools/client/memory/constants");
 const {
   takeSnapshotAndCensus,
-  selectSnapshotAndRefresh,
   fetchImmediatelyDominated,
 } = require("devtools/client/memory/actions/snapshot");
 const DominatorTreeLazyChildren
@@ -23,7 +22,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -89,9 +88,9 @@ add_task(function *() {
 
   // Fetch both subtrees concurrently.
   dispatch(fetchImmediatelyDominated(heapWorker, getState().snapshots[0].id,
-                                     new DominatorTreeLazyChildren(oldNode.nodeId, 0)));
+                            new DominatorTreeLazyChildren(oldNode.nodeId, 0)));
   dispatch(fetchImmediatelyDominated(heapWorker, getState().snapshots[0].id,
-                                     new DominatorTreeLazyChildren(oldNode2.nodeId, 0)));
+                            new DominatorTreeLazyChildren(oldNode2.nodeId, 0)));
 
   equal(getState().snapshots[0].dominatorTree.state,
         dominatorTreeState.INCREMENTAL_FETCHING,
@@ -137,7 +136,8 @@ add_task(function *() {
   const newNode2 = findNodeWithId(oldNode2.nodeId, newRoot);
   ok(newNode2, "Should find the second node in the new tree again");
   ok(newNode2 !== oldNode2,
-     "We did not mutate the second old node in place, instead created a new node");
+     "We did not mutate the second old node in place, " +
+     "instead created a new node");
   ok(newNode2.children,
      "And the new node should have the new children attached");
 

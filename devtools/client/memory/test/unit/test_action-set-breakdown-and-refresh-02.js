@@ -5,18 +5,20 @@
  * Tests the task creator `setBreakdownAndRefreshAndRefresh()` for custom
  * breakdowns.
  */
+"use strict";
 
 let { snapshotState: states } = require("devtools/client/memory/constants");
 let { breakdownEquals } = require("devtools/client/memory/utils");
 let { setBreakdownAndRefresh } = require("devtools/client/memory/actions/breakdown");
 let { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
-let custom = { by: "internalType", then: { by: "count", bytes: true, count: false }};
+let custom = { by: "internalType", then: { by: "count", bytes: true,
+                                           count: false }};
 
 function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -32,11 +34,13 @@ add_task(function *() {
 
   ok(breakdownEquals(getState().snapshots[0].census.breakdown, custom),
     "New snapshot stored custom breakdown when done taking census");
-  ok(getState().snapshots[0].census.report.children.length, "Census has some children");
+  ok(getState().snapshots[0].census.report.children.length,
+     "Census has some children");
   // Ensure we don't have `count` in any results
   ok(getState().snapshots[0].census.report.children.every(c => !c.count),
      "Census used custom breakdown without counts");
   // Ensure we do have `bytes` in the results
-  ok(getState().snapshots[0].census.report.children.every(c => typeof c.bytes === "number"),
+  ok(getState().snapshots[0].census.report.children.every(c =>
+     typeof c.bytes === "number"),
      "Census used custom breakdown with bytes");
 });

@@ -1,6 +1,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported Heap */
 
 const { DOM: dom, createClass, PropTypes, createFactory } = require("devtools/client/shared/vendor/react");
 const { assert, safeErrorString } = require("devtools/shared/DevToolsUtils");
@@ -8,6 +10,8 @@ const Census = createFactory(require("./census"));
 const CensusHeader = createFactory(require("./census-header"));
 const DominatorTree = createFactory(require("./dominator-tree"));
 const DominatorTreeHeader = createFactory(require("./dominator-tree-header"));
+const HSplitBox = createFactory(require("devtools/client/shared/components/h-split-box"));
+const ShortestPaths = createFactory(require("./shortest-paths"));
 const { getStatusTextFull, L10N } = require("../utils");
 const { snapshotState: states, diffingState, viewState, dominatorTreeState } = require("../constants");
 const { snapshot: snapshotModel, diffingModel } = require("../models");
@@ -145,10 +149,12 @@ const Heap = module.exports = createClass({
     onDominatorTreeCollapse: PropTypes.func.isRequired,
     onCensusFocus: PropTypes.func.isRequired,
     onDominatorTreeFocus: PropTypes.func.isRequired,
+    onShortestPathsResize: PropTypes.func.isRequired,
     snapshot: snapshotModel,
     onViewSourceInDebugger: PropTypes.func.isRequired,
     diffing: diffingModel,
     view: PropTypes.string.isRequired,
+    sizes: PropTypes.object.isRequired,
   },
 
   render() {
@@ -185,12 +191,13 @@ const Heap = module.exports = createClass({
     }
 
     assert(view === viewState.DOMINATOR_TREE,
-           "If we aren't in progress, looking at a census, or diffing, then we " +
-           "must be looking at a dominator tree");
+           "If we aren't in progress, looking at a census, or diffing, " +
+           "then we must be looking at a dominator tree");
     assert(!diffing, "Should not have diffing");
     assert(snapshot.dominatorTree, "Should have a dominator tree");
 
-    return this._renderDominatorTree(state, onViewSourceInDebugger, snapshot.dominatorTree,
+    return this._renderDominatorTree(state, onViewSourceInDebugger,
+                                     snapshot.dominatorTree,
                                      onLoadMoreSiblings);
   },
 
@@ -255,6 +262,8 @@ const Heap = module.exports = createClass({
     const contents = [];
 
     if (census.breakdown.by === "allocationStack"
+        && census.report
+        && census.report.children
         && census.report.children.length === 1
         && census.report.children[0].name === "noStack") {
       contents.push(dom.div({ className: "error no-allocation-stacks" },
@@ -274,9 +283,15 @@ const Heap = module.exports = createClass({
     return this._renderHeapView(state, ...contents);
   },
 
-  _renderDominatorTree(state, onViewSourceInDebugger, dominatorTree, onLoadMoreSiblings) {
-    return this._renderHeapView(
-      state,
+  _renderDominatorTree(state, onViewSourceInDebugger, dominatorTree,
+                       onLoadMoreSiblings) {
+    const tree = dom.div(
+      {
+        className: "vbox",
+        style: {
+          overflowY: "auto"
+        }
+      },
       DominatorTreeHeader(),
       DominatorTree({
         onViewSourceInDebugger,
@@ -285,6 +300,22 @@ const Heap = module.exports = createClass({
         onExpand: this.props.onDominatorTreeExpand,
         onCollapse: this.props.onDominatorTreeCollapse,
         onFocus: this.props.onDominatorTreeFocus,
+      })
+    );
+
+    const shortestPaths = ShortestPaths({
+      graph: dominatorTree.focused
+        ? dominatorTree.focused.shortestPaths
+        : null
+    });
+
+    return this._renderHeapView(
+      state,
+      HSplitBox({
+        start: tree,
+        end: shortestPaths,
+        startWidth: this.props.sizes.shortestPathsSize,
+        onResize: this.props.onShortestPathsResize,
       })
     );
   },

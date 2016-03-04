@@ -2,15 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* exported pickFileAndImportSnapshotAndCensus */
 
 const { immutableUpdate, reportException, assert } = require("devtools/shared/DevToolsUtils");
 const { snapshotState: states, actions } = require("../constants");
 const { L10N, openFilePicker, createSnapshot } = require("../utils");
+const telemetry = require("../telemetry");
 const { readSnapshot, takeCensus, selectSnapshot } = require("./snapshot");
 const { OS } = require("resource://gre/modules/osfile.jsm");
-const VALID_EXPORT_STATES = [states.SAVED, states.READ, states.SAVING_CENSUS, states.SAVED_CENSUS];
+const VALID_EXPORT_STATES = [states.SAVED, states.READ, states.SAVING_CENSUS,
+                             states.SAVED_CENSUS];
 
-exports.pickFileAndExportSnapshot = function (snapshot) {
+exports.pickFileAndExportSnapshot = function(snapshot) {
   return function* (dispatch, getState) {
     let outputFile = yield openFilePicker({
       title: L10N.getFormatStr("snapshot.io.save.window"),
@@ -27,8 +30,9 @@ exports.pickFileAndExportSnapshot = function (snapshot) {
   };
 };
 
-const exportSnapshot = exports.exportSnapshot = function (snapshot, dest) {
+const exportSnapshot = exports.exportSnapshot = function(snapshot, dest) {
   return function* (dispatch, getState) {
+    telemetry.countExportSnapshot();
 
     dispatch({ type: actions.EXPORT_SNAPSHOT_START, snapshot });
 
@@ -46,7 +50,8 @@ const exportSnapshot = exports.exportSnapshot = function (snapshot, dest) {
   };
 };
 
-const pickFileAndImportSnapshotAndCensus = exports.pickFileAndImportSnapshotAndCensus = function (heapWorker) {
+const pickFileAndImportSnapshotAndCensus =
+exports.pickFileAndImportSnapshotAndCensus = function(heapWorker) {
   return function* (dispatch, getState) {
     let input = yield openFilePicker({
       title: L10N.getFormatStr("snapshot.io.import.window"),
@@ -62,8 +67,11 @@ const pickFileAndImportSnapshotAndCensus = exports.pickFileAndImportSnapshotAndC
   };
 };
 
-const importSnapshotAndCensus = exports.importSnapshotAndCensus = function (heapWorker, path) {
+const importSnapshotAndCensus =
+exports.importSnapshotAndCensus = function(heapWorker, path) {
   return function* (dispatch, getState) {
+    telemetry.countImportSnapshot();
+
     const snapshot = immutableUpdate(createSnapshot(getState()), {
       path,
       state: states.IMPORTING,

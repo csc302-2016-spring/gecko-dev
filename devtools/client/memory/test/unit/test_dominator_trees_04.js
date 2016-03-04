@@ -3,6 +3,7 @@
 
 // Test that selecting the dominator tree view while in the middle of taking a
 // snapshot properly kicks off fetching and computing dominator trees.
+"use strict";
 
 const {
   snapshotState: states,
@@ -20,7 +21,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -28,7 +29,8 @@ add_task(function *() {
   for (let intermediateSnapshotState of [states.SAVING,
                                          states.READING,
                                          states.SAVING_CENSUS]) {
-    dumpn(`Testing switching to the DOMINATOR_TREE view in the middle of the ${intermediateSnapshotState} snapshot state`);
+    dumpn(`Testing switching to the DOMINATOR_TREE view
+          in the middle of the ${intermediateSnapshotState} snapshot state`);
 
     let store = Store();
     let { getState, dispatch } = store;

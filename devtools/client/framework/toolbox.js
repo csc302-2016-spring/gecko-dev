@@ -1,3 +1,5 @@
+/* -*- indent-tabs-mode: nil; js-indent-level: 2 -*- */
+/* vim: set ft=javascript ts=2 et sw=2 tw=80: */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -16,6 +18,7 @@ const SCREENSIZE_HISTOGRAM = "DEVTOOLS_SCREEN_RESOLUTION_ENUMERATED_PER_USER";
 
 var {Cc, Ci, Cu} = require("chrome");
 var promise = require("promise");
+var {gDevTools} = require("devtools/client/framework/devtools");
 var EventEmitter = require("devtools/shared/event-emitter");
 var Telemetry = require("devtools/client/shared/telemetry");
 var HUDService = require("devtools/client/webconsole/hudservice");
@@ -23,13 +26,10 @@ var viewSource = require("devtools/client/shared/view-source");
 var { attachThread, detachThread } = require("./attach-thread");
 
 Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://devtools/client/framework/gDevTools.jsm");
 Cu.import("resource://devtools/client/scratchpad/scratchpad-manager.jsm");
 Cu.import("resource://devtools/client/shared/DOMHelpers.jsm");
 Cu.import("resource://gre/modules/Task.jsm");
 
-loader.lazyImporter(this, "CommandUtils",
-  "resource://devtools/client/shared/DeveloperToolbar.jsm");
 loader.lazyGetter(this, "toolboxStrings", () => {
   const properties = "chrome://devtools/locale/toolbox.properties";
   const bundle = Services.strings.createBundle(properties);
@@ -45,6 +45,8 @@ loader.lazyGetter(this, "toolboxStrings", () => {
     }
   };
 });
+loader.lazyRequireGetter(this, "CommandUtils",
+  "devtools/client/shared/developer-toolbar", true);
 loader.lazyRequireGetter(this, "getHighlighterUtils",
   "devtools/client/framework/toolbox-highlighter-utils", true);
 loader.lazyRequireGetter(this, "Hosts",
@@ -1773,6 +1775,16 @@ Toolbox.prototype = {
   },
 
   /**
+   * Return if the tool is available as a tab (i.e. if it's checked
+   * in the options panel). This is different from Toolbox.getPanel -
+   * a tool could be registered but not yet opened in which case
+   * isToolRegistered would return true but getPanel would return false.
+   */
+  isToolRegistered: function(toolId) {
+    return gDevTools.getToolDefinitionMap().has(toolId);
+  },
+
+  /**
    * Handler for the tool-registered event.
    * @param  {string} event
    *         Name of the event ("tool-registered")
@@ -1782,6 +1794,9 @@ Toolbox.prototype = {
   _toolRegistered: function(event, toolId) {
     let tool = gDevTools.getToolDefinition(toolId);
     this._buildTabForTool(tool);
+    // Emit the event so tools can listen to it from the toolbox level
+    // instead of gDevTools
+    this.emit("tool-registered", toolId);
   },
 
   /**
@@ -1833,6 +1848,9 @@ Toolbox.prototype = {
         key.parentNode.removeChild(key);
       }
     }
+    // Emit the event so tools can listen to it from the toolbox level
+    // instead of gDevTools
+    this.emit("tool-unregistered", toolId);
   },
 
   /**

@@ -14,7 +14,7 @@ const DominatorTreeNode = require("devtools/shared/heapsnapshot/DominatorTreeNod
 
 const handlers = Object.create(null);
 
-handlers[actions.SNAPSHOT_ERROR] = function (snapshots, { id, error }) {
+handlers[actions.SNAPSHOT_ERROR] = function(snapshots, { id, error }) {
   return snapshots.map(snapshot => {
     return snapshot.id === id
       ? immutableUpdate(snapshot, { state: states.ERROR, error })
@@ -22,11 +22,11 @@ handlers[actions.SNAPSHOT_ERROR] = function (snapshots, { id, error }) {
   });
 };
 
-handlers[actions.TAKE_SNAPSHOT_START] = function (snapshots, { snapshot }) {
+handlers[actions.TAKE_SNAPSHOT_START] = function(snapshots, { snapshot }) {
   return [...snapshots, snapshot];
 };
 
-handlers[actions.TAKE_SNAPSHOT_END] = function (snapshots, { id, path }) {
+handlers[actions.TAKE_SNAPSHOT_END] = function(snapshots, { id, path }) {
   return snapshots.map(snapshot => {
     return snapshot.id === id
       ? immutableUpdate(snapshot, { state: states.SAVED, path })
@@ -36,7 +36,7 @@ handlers[actions.TAKE_SNAPSHOT_END] = function (snapshots, { id, path }) {
 
 handlers[actions.IMPORT_SNAPSHOT_START] = handlers[actions.TAKE_SNAPSHOT_START];
 
-handlers[actions.READ_SNAPSHOT_START] = function (snapshots, { id }) {
+handlers[actions.READ_SNAPSHOT_START] = function(snapshots, { id }) {
   return snapshots.map(snapshot => {
     return snapshot.id === id
       ? immutableUpdate(snapshot, { state: states.READING })
@@ -44,7 +44,8 @@ handlers[actions.READ_SNAPSHOT_START] = function (snapshots, { id }) {
   });
 };
 
-handlers[actions.READ_SNAPSHOT_END] = function (snapshots, { id, creationTime }) {
+handlers[actions.READ_SNAPSHOT_END] = function(snapshots,
+                                               { id, creationTime }) {
   return snapshots.map(snapshot => {
     return snapshot.id === id
       ? immutableUpdate(snapshot, { state: states.READ, creationTime })
@@ -52,7 +53,9 @@ handlers[actions.READ_SNAPSHOT_END] = function (snapshots, { id, creationTime })
   });
 };
 
-handlers[actions.TAKE_CENSUS_START] = function (snapshots, { id, breakdown, inverted, filter }) {
+handlers[actions.TAKE_CENSUS_START] = function(snapshots,
+                                               { id, breakdown, inverted,
+                                                 filter }) {
   const census = {
     report: null,
     breakdown,
@@ -67,9 +70,15 @@ handlers[actions.TAKE_CENSUS_START] = function (snapshots, { id, breakdown, inve
   });
 };
 
-handlers[actions.TAKE_CENSUS_END] = function (snapshots, { id, report, breakdown, inverted, filter }) {
+handlers[actions.TAKE_CENSUS_END] = function(snapshots, { id,
+                                                         report,
+                                                         parentMap,
+                                                         breakdown,
+                                                         inverted,
+                                                         filter }) {
   const census = {
     report,
+    parentMap,
     expanded: new Set(),
     breakdown,
     inverted,
@@ -83,7 +92,7 @@ handlers[actions.TAKE_CENSUS_END] = function (snapshots, { id, report, breakdown
   });
 };
 
-handlers[actions.EXPAND_CENSUS_NODE] = function (snapshots, { id, node }) {
+handlers[actions.EXPAND_CENSUS_NODE] = function(snapshots, { id, node }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -103,7 +112,7 @@ handlers[actions.EXPAND_CENSUS_NODE] = function (snapshots, { id, node }) {
   });
 };
 
-handlers[actions.COLLAPSE_CENSUS_NODE] = function (snapshots, { id, node }) {
+handlers[actions.COLLAPSE_CENSUS_NODE] = function(snapshots, { id, node }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -122,7 +131,7 @@ handlers[actions.COLLAPSE_CENSUS_NODE] = function (snapshots, { id, node }) {
   });
 };
 
-handlers[actions.FOCUS_CENSUS_NODE] = function (snapshots, { id, node }) {
+handlers[actions.FOCUS_CENSUS_NODE] = function(snapshots, { id, node }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -134,25 +143,25 @@ handlers[actions.FOCUS_CENSUS_NODE] = function (snapshots, { id, node }) {
   });
 };
 
-handlers[actions.SELECT_SNAPSHOT] = function (snapshots, { id }) {
+handlers[actions.SELECT_SNAPSHOT] = function(snapshots, { id }) {
   return snapshots.map(s => immutableUpdate(s, { selected: s.id === id }));
 };
 
-handlers[actions.DELETE_SNAPSHOTS_START] = function (snapshots, { ids }) {
+handlers[actions.DELETE_SNAPSHOTS_START] = function(snapshots, { ids }) {
   return snapshots.filter(s => ids.indexOf(s.id) === -1);
 };
 
-handlers[actions.DELETE_SNAPSHOTS_END] = function (snapshots) {
+handlers[actions.DELETE_SNAPSHOTS_END] = function(snapshots) {
   return snapshots;
 };
 
-handlers[actions.CHANGE_VIEW] = function (snapshots, { view }) {
+handlers[actions.CHANGE_VIEW] = function(snapshots, { view }) {
   return view === viewState.DIFFING
     ? snapshots.map(s => immutableUpdate(s, { selected: false }))
     : snapshots;
 };
 
-handlers[actions.COMPUTE_DOMINATOR_TREE_START] = function (snapshots, { id }) {
+handlers[actions.COMPUTE_DOMINATOR_TREE_START] = function(snapshots, { id }) {
   const dominatorTree = Object.freeze({
     state: dominatorTreeState.COMPUTING,
     dominatorTreeId: undefined,
@@ -170,7 +179,9 @@ handlers[actions.COMPUTE_DOMINATOR_TREE_START] = function (snapshots, { id }) {
   });
 };
 
-handlers[actions.COMPUTE_DOMINATOR_TREE_END] = function (snapshots, { id, dominatorTreeId }) {
+handlers[actions.COMPUTE_DOMINATOR_TREE_END] = function(snapshots,
+                                                        { id,
+                                                          dominatorTreeId }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -188,7 +199,8 @@ handlers[actions.COMPUTE_DOMINATOR_TREE_END] = function (snapshots, { id, domina
   });
 };
 
-handlers[actions.FETCH_DOMINATOR_TREE_START] = function (snapshots, { id, breakdown }) {
+handlers[actions.FETCH_DOMINATOR_TREE_START] = function(snapshots,
+                                                        { id, breakdown }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -197,7 +209,8 @@ handlers[actions.FETCH_DOMINATOR_TREE_START] = function (snapshots, { id, breakd
     assert(snapshot.dominatorTree, "Should have a dominator tree model");
     assert(snapshot.dominatorTree.state !== dominatorTreeState.COMPUTING &&
            snapshot.dominatorTree.state !== dominatorTreeState.ERROR,
-           `Should have already computed the dominator tree, found state = ${snapshot.dominatorTree.state}`);
+           `Should have already computed the dominator tree,
+            found state = ${snapshot.dominatorTree.state}`);
 
     const dominatorTree = immutableUpdate(snapshot.dominatorTree, {
       state: dominatorTreeState.FETCHING,
@@ -208,7 +221,7 @@ handlers[actions.FETCH_DOMINATOR_TREE_START] = function (snapshots, { id, breakd
   });
 };
 
-handlers[actions.FETCH_DOMINATOR_TREE_END] = function (snapshots, { id, root }) {
+handlers[actions.FETCH_DOMINATOR_TREE_END] = function(snapshots, { id, root }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -228,7 +241,8 @@ handlers[actions.FETCH_DOMINATOR_TREE_END] = function (snapshots, { id, root }) 
   });
 };
 
-handlers[actions.EXPAND_DOMINATOR_TREE_NODE] = function (snapshots, { id, node }) {
+handlers[actions.EXPAND_DOMINATOR_TREE_NODE] = function(snapshots,
+                                                        { id, node }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -239,8 +253,8 @@ handlers[actions.EXPAND_DOMINATOR_TREE_NODE] = function (snapshots, { id, node }
            "Should have the dominator tree's expanded set");
 
     // Warning: mutable operations couched in an immutable update ahead :'( This
-    // at least lets us use referential equality on the dominatorTree model itself,
-    // even though the expanded set is mutated in place.
+    // at least lets us use referential equality on the dominatorTree model
+    // itself, even though the expanded set is mutated in place.
     const expanded = snapshot.dominatorTree.expanded;
     expanded.add(node.nodeId);
     const dominatorTree = immutableUpdate(snapshot.dominatorTree, { expanded });
@@ -248,7 +262,8 @@ handlers[actions.EXPAND_DOMINATOR_TREE_NODE] = function (snapshots, { id, node }
   });
 };
 
-handlers[actions.COLLAPSE_DOMINATOR_TREE_NODE] = function (snapshots, { id, node }) {
+handlers[actions.COLLAPSE_DOMINATOR_TREE_NODE] = function(snapshots,
+                                                          { id, node }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
@@ -267,31 +282,36 @@ handlers[actions.COLLAPSE_DOMINATOR_TREE_NODE] = function (snapshots, { id, node
   });
 };
 
-handlers[actions.FOCUS_DOMINATOR_TREE_NODE] = function (snapshots, { id, node }) {
+handlers[actions.FOCUS_DOMINATOR_TREE_NODE] = function(snapshots,
+                                                       { id, node }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
     }
 
     assert(snapshot.dominatorTree, "Should have a dominator tree");
-    const dominatorTree = immutableUpdate(snapshot.dominatorTree, { focused: node });
+    const dominatorTree = immutableUpdate(snapshot.dominatorTree,
+                                          { focused: node });
     return immutableUpdate(snapshot, { dominatorTree });
   });
 };
 
-handlers[actions.FETCH_IMMEDIATELY_DOMINATED_START] = function (snapshots, { id }) {
+handlers[actions.FETCH_IMMEDIATELY_DOMINATED_START] = function(snapshots,
+                                                               { id }) {
   return snapshots.map(snapshot => {
     if (snapshot.id !== id) {
       return snapshot;
     }
 
     assert(snapshot.dominatorTree, "Should have a dominator tree model");
-    assert(snapshot.dominatorTree.state == dominatorTreeState.INCREMENTAL_FETCHING ||
+    assert(snapshot.dominatorTree.state ==
+           dominatorTreeState.INCREMENTAL_FETCHING ||
            snapshot.dominatorTree.state == dominatorTreeState.LOADED,
            "The dominator tree should be loaded if we are going to " +
            "incrementally fetch children.");
 
-    const activeFetchRequestCount = snapshot.dominatorTree.activeFetchRequestCount
+    const activeFetchRequestCount =
+      snapshot.dominatorTree.activeFetchRequestCount
       ? snapshot.dominatorTree.activeFetchRequestCount + 1
       : 1;
 
@@ -305,15 +325,17 @@ handlers[actions.FETCH_IMMEDIATELY_DOMINATED_START] = function (snapshots, { id 
 };
 
 handlers[actions.FETCH_IMMEDIATELY_DOMINATED_END] =
-  function (snapshots, { id, path, nodes, moreChildrenAvailable}) {
+  function(snapshots, { id, path, nodes, moreChildrenAvailable}) {
     return snapshots.map(snapshot => {
       if (snapshot.id !== id) {
         return snapshot;
       }
 
       assert(snapshot.dominatorTree, "Should have a dominator tree model");
-      assert(snapshot.dominatorTree.root, "Should have a dominator tree model root");
-      assert(snapshot.dominatorTree.state === dominatorTreeState.INCREMENTAL_FETCHING,
+      assert(snapshot.dominatorTree.root,
+             "Should have a dominator tree model root");
+      assert(snapshot.dominatorTree.state ===
+             dominatorTreeState.INCREMENTAL_FETCHING,
              "The dominator tree state should be INCREMENTAL_FETCHING");
 
       const root = DominatorTreeNode.insert(snapshot.dominatorTree.root,
@@ -322,12 +344,15 @@ handlers[actions.FETCH_IMMEDIATELY_DOMINATED_END] =
                                             moreChildrenAvailable);
 
       const focused = snapshot.dominatorTree.focused
-        ? DominatorTreeNode.getNodeByIdAlongPath(snapshot.dominatorTree.focused.nodeId,
-                                                 root,
-                                                 path)
+                      ? DominatorTreeNode.getNodeByIdAlongPath(
+                        snapshot.dominatorTree.focused.nodeId,
+                        root,
+                        path
+                        )
         : undefined;
 
-      const activeFetchRequestCount = snapshot.dominatorTree.activeFetchRequestCount === 1
+      const activeFetchRequestCount =
+        snapshot.dominatorTree.activeFetchRequestCount === 1
         ? undefined
         : snapshot.dominatorTree.activeFetchRequestCount - 1;
 
@@ -348,7 +373,7 @@ handlers[actions.FETCH_IMMEDIATELY_DOMINATED_END] =
     });
   };
 
-handlers[actions.DOMINATOR_TREE_ERROR] = function (snapshots, { id, error }) {
+handlers[actions.DOMINATOR_TREE_ERROR] = function(snapshots, { id, error }) {
   assert(error, "actions with DOMINATOR_TREE_ERROR should have an error");
 
   return snapshots.map(snapshot => {
@@ -365,7 +390,7 @@ handlers[actions.DOMINATOR_TREE_ERROR] = function (snapshots, { id, error }) {
   });
 };
 
-module.exports = function (snapshots = [], action) {
+module.exports = function(snapshots = [], action) {
   const handler = handlers[action.type];
   if (handler) {
     return handler(snapshots, action);

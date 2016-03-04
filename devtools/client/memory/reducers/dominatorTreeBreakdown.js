@@ -9,11 +9,11 @@ const DEFAULT_BREAKDOWN = dominatorTreeBreakdowns.coarseType.breakdown;
 
 const handlers = Object.create(null);
 
-handlers[actions.SET_DOMINATOR_TREE_BREAKDOWN] = function (_, { breakdown }) {
+handlers[actions.SET_DOMINATOR_TREE_BREAKDOWN] = function(_, { breakdown }) {
   return breakdown;
 };
 
-module.exports = function (state = DEFAULT_BREAKDOWN, action) {
+module.exports = function(state = DEFAULT_BREAKDOWN, action) {
   const handler = handlers[action.type];
   return handler ? handler(state, action) : state;
 };

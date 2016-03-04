@@ -1,9 +1,15 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported CensusTreeItem */
 
 const { isSavedFrame } = require("devtools/shared/DevToolsUtils");
-const { DOM: dom, createClass, createFactory } = require("devtools/client/shared/vendor/react");
+const {
+  DOM: dom,
+  createClass,
+  createFactory
+} = require("devtools/client/shared/vendor/react");
 const { L10N, formatNumber, formatPercent } = require("../utils");
 const Frame = createFactory(require("devtools/client/shared/components/frame"));
 const { TREE_ROW_HEIGHT } = require("../constants");
@@ -25,11 +31,11 @@ const CensusTreeItem = module.exports = createClass({
       depth,
       arrow,
       focused,
-      toolbox,
       getPercentBytes,
       getPercentCount,
       showSign,
       onViewSourceInDebugger,
+      inverted,
     } = this.props;
 
     const bytes = formatNumber(item.bytes, showSign);
@@ -39,12 +45,21 @@ const CensusTreeItem = module.exports = createClass({
     const percentCount = formatPercent(getPercentCount(item.count), showSign);
 
     const totalBytes = formatNumber(item.totalBytes, showSign);
-    const percentTotalBytes = formatPercent(getPercentBytes(item.totalBytes), showSign);
+    const percentTotalBytes = formatPercent(getPercentBytes(item.totalBytes),
+                                            showSign);
 
     const totalCount = formatNumber(item.totalCount, showSign);
-    const percentTotalCount = formatPercent(getPercentCount(item.totalCount), showSign);
+    const percentTotalCount = formatPercent(getPercentCount(item.totalCount),
+                                            showSign);
 
-    return dom.div({ className: `heap-tree-item ${focused ? "focused" :""}` },
+    let pointer;
+    if (inverted && depth > 0) {
+      pointer = dom.span({ className: "children-pointer" }, "↖");
+    } else if (!inverted && item.children && item.children.length) {
+      pointer = dom.span({ className: "children-pointer" }, "↘");
+    }
+
+    return dom.div({ className: `heap-tree-item ${focused ? "focused" : ""}` },
       dom.span({ className: "heap-tree-item-field heap-tree-item-bytes" },
                dom.span({ className: "heap-tree-number" }, bytes),
                dom.span({ className: "heap-tree-percent" }, percentBytes)),
@@ -60,6 +75,7 @@ const CensusTreeItem = module.exports = createClass({
                dom.span({ className: "heap-tree-item-field heap-tree-item-name",
                           style: { marginLeft: depth * TREE_ROW_HEIGHT }},
         arrow,
+        pointer,
         this.toLabel(item.name, onViewSourceInDebugger)
       )
     );

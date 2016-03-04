@@ -103,6 +103,9 @@ Tools.inspector = {
   ],
 
   preventClosingOnKey: true,
+  onkey: function(panel, toolbox) {
+    toolbox.highlighterUtils.togglePicker();
+  },
 
   isTargetSupported: function(target) {
     return target.hasActor("inspector");
@@ -386,7 +389,7 @@ Tools.scratchpad = {
   commands: "devtools/client/scratchpad/scratchpad-commands",
 
   isTargetSupported: function(target) {
-    return target.isRemote;
+    return target.hasActor("console");
   },
 
   build: function(iframeWindow, toolbox) {

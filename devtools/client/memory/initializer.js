@@ -3,8 +3,10 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 "use strict";
+/* exported initialize, destroy */
+/* global document */
 
-const { classes: Cc, interfaces: Ci, utils: Cu, results: Cr } = Components;
+const { utils: Cu} = Components;
 const BrowserLoaderModule = {};
 Cu.import("resource://devtools/client/shared/browser-loader.js", BrowserLoaderModule);
 const { require } = BrowserLoaderModule.BrowserLoader("resource://devtools/client/memory/", this);
@@ -18,9 +20,10 @@ const { assert } = require("devtools/shared/DevToolsUtils");
 const Telemetry = require("devtools/client/shared/telemetry");
 
 /**
- * The current target, toolbox, MemoryFront, and HeapAnalysesClient, set by this tool's host.
+ * The current target, toolbox, MemoryFront, and HeapAnalysesClient,
+ * set by this tool's host.
  */
-var gToolbox, gTarget, gFront, gHeapAnalysesClient;
+var gToolbox, gFront, gHeapAnalysesClient;
 
 /**
  * Variables set by `initialize()`
@@ -32,7 +35,8 @@ var initialize = Task.async(function*() {
   telemetry.toolOpened("memory");
   gRoot = document.querySelector("#app");
   gStore = Store();
-  gApp = createElement(App, { toolbox: gToolbox, front: gFront, heapWorker: gHeapAnalysesClient });
+  gApp = createElement(App, { toolbox: gToolbox, front: gFront,
+                              heapWorker: gHeapAnalysesClient });
   gProvider = createElement(Provider, { store: gStore }, gApp);
   ReactDOM.render(gProvider, gRoot);
   unsubscribe = gStore.subscribe(onStateChange);
@@ -40,19 +44,26 @@ var initialize = Task.async(function*() {
 
 var destroy = Task.async(function*() {
   const ok = ReactDOM.unmountComponentAtNode(gRoot);
-  assert(ok, "Should successfully unmount the memory tool's top level React component");
+  assert(ok,
+    "Should successfully unmount the memory tool's top level React component");
 
   telemetry.toolClosed("memory");
   unsubscribe();
 
-  gStore, gRoot, gApp, gProvider, unsubscribe, isHighlighted, telemetry = null;
+  gStore = null;
+  gRoot = null;
+  gApp = null;
+  gProvider = null;
+  unsubscribe = null;
+  isHighlighted = null;
+  telemetry = null;
 });
 
 /**
  * Fired on any state change, currently only handles toggling
  * the highlighting of the tool when recording allocations.
  */
-function onStateChange () {
+function onStateChange() {
   let isRecording = gStore.getState().allocations.recording;
   if (isRecording === isHighlighted) {
     return;

@@ -14,6 +14,7 @@ var JsCallTreeView = Heritage.extend(DetailsSubview, {
     "invert-call-tree",
     "show-platform-data",
     "flatten-tree-recursion",
+    "show-jit-optimizations",
   ],
 
   rangeChangeDebounceTime: 75, // ms
@@ -52,22 +53,20 @@ var JsCallTreeView = Heritage.extend(DetailsSubview, {
   render: function (interval={}) {
     let recording = PerformanceController.getCurrentRecording();
     let profile = recording.getProfile();
-    let optimizations = recording.getConfiguration().withJITOptimizations;
+    let showOptimizations = PerformanceController.getOption("show-jit-optimizations");
 
     let options = {
       contentOnly: !PerformanceController.getOption("show-platform-data"),
       invertTree: PerformanceController.getOption("invert-call-tree"),
       flattenRecursion: PerformanceController.getOption("flatten-tree-recursion"),
-      showOptimizationHint: optimizations
+      showOptimizationHint: showOptimizations
     };
     let threadNode = this.threadNode = this._prepareCallTree(profile, interval, options);
     this._populateCallTree(threadNode, options);
 
-    if (optimizations) {
-      this.showOptimizations();
-    } else {
-      this.hideOptimizations();
-    }
+    // For better or worse, re-rendering loses frame selection,
+    // so we should always hide opts on rerender
+    this.hideOptimizations();
 
     this.emit(EVENTS.JS_CALL_TREE_RENDERED);
   },
@@ -81,20 +80,23 @@ var JsCallTreeView = Heritage.extend(DetailsSubview, {
   },
 
   _onFocus: function (_, treeItem) {
+    let showOptimizations = PerformanceController.getOption("show-jit-optimizations");
     let recording = PerformanceController.getCurrentRecording();
     let frameNode = treeItem.frame;
-
-    if (!frameNode) {
-      console.warn("No frame found!");
-      return;
-    }
-
-    let frameData = frameNode.getInfo();
-    let optimizationSites = frameNode.hasOptimizations()
+    let optimizationSites = frameNode && frameNode.hasOptimizations()
                             ? frameNode.getOptimizations().optimizationSites
                             : [];
 
-    let optimizations = Optimizations({
+    if (!showOptimizations || !frameNode || optimizationSites.length === 0) {
+      this.hideOptimizations();
+      this.emit("focus", treeItem);
+      return;
+    }
+
+    this.showOptimizations();
+
+    let frameData = frameNode.getInfo();
+    let optimizations = JITOptimizationsView({
       frameData,
       optimizationSites,
       onViewSourceInDebugger: (url, line) => {

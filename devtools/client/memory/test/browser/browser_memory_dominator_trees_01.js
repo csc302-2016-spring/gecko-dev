@@ -5,17 +5,15 @@
 // through nodes across incrementally fetching subtrees.
 
 "use strict";
+/* global waitUntilState */
 
 const {
   dominatorTreeState,
-  snapshotState,
   viewState,
 } = require("devtools/client/memory/constants");
 const {
   expandDominatorTreeNode,
-  takeSnapshotAndCensus,
 } = require("devtools/client/memory/actions/snapshot");
-const { toggleInverted } = require("devtools/client/memory/actions/inverted");
 const { changeView } = require("devtools/client/memory/actions/view");
 
 const TEST_URL = "http://example.com/browser/devtools/client/memory/test/browser/doc_big_tree.html";
@@ -24,8 +22,6 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
   // Taking snapshots and computing dominator trees is slow :-/
   requestLongerTimeout(4);
 
-  const heapWorker = panel.panelWin.gHeapAnalysesClient;
-  const front = panel.panelWin.gFront;
   const store = panel.panelWin.gStore;
   const { getState, dispatch } = store;
   const doc = panel.panelWin.document;
@@ -85,9 +81,11 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
 
   // Select the deepest node.
 
-  EventUtils.synthesizeMouseAtCenter(doc.querySelector(`.node-${deepest.nodeId}`),
-                                     {},
-                                     panel.panelWin);
+  EventUtils.synthesizeMouseAtCenter(
+                                   doc.querySelector(`.node-${deepest.nodeId}`),
+                                   {},
+                                   panel.panelWin
+                                   );
   yield waitUntilState(store, state =>
     state.snapshots[0].dominatorTree.focused.nodeId === deepest.nodeId);
   ok(doc.querySelector(`.node-${deepest.nodeId}`).classList.contains("focused"),
@@ -101,7 +99,8 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
     state.snapshots[0].dominatorTree.expanded.has(deepest.nodeId));
   is(getState().snapshots[0].dominatorTree.state,
      dominatorTreeState.INCREMENTAL_FETCHING,
-     "Expanding the deepest node should start an incremental fetch of its subtree");
+     "Expanding the deepest node should start an " +
+     "incremental fetch of its subtree");
   ok(doc.querySelector(`.node-${deepest.nodeId}`).classList.contains("focused"),
      "The deepest node should still be focused after expansion");
 
@@ -111,27 +110,29 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
     state.snapshots[0].dominatorTree.state === dominatorTreeState.LOADED);
   ok(true, "And the incremental fetch completes.");
   ok(doc.querySelector(`.node-${deepest.nodeId}`).classList.contains("focused"),
-     "The deepest node should still be focused after we have loaded its children");
+     "The deepest node should still be focused " +
+     "after we have loaded its children");
 
   // Find the most up-to-date version of the node whose children we just
   // incrementally fetched.
 
-  const newDeepest = (function findNewDeepest(node = getState().snapshots[0].dominatorTree.root) {
-    if (node.nodeId === deepest.nodeId) {
-      return node;
-    }
+  const newDeepest =
+   (function findNewDeepest(node = getState().snapshots[0].dominatorTree.root) {
+     if (node.nodeId === deepest.nodeId) {
+       return node;
+     }
 
-    if (node.children) {
-      for (let child of node.children) {
-        const found = findNewDeepest(child);
-        if (found) {
-          return found;
-        }
-      }
-    }
+     if (node.children) {
+       for (let child of node.children) {
+         const found = findNewDeepest(child);
+         if (found) {
+           return found;
+         }
+       }
+     }
 
-    return null;
-  }());
+     return null;
+   }());
 
   ok(newDeepest, "We found the up-to-date version of deepest");
   ok(newDeepest.children, "And its children are loaded");
@@ -147,6 +148,8 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
   EventUtils.synthesizeKey("VK_RIGHT", {}, panel.panelWin);
   yield waitUntilState(store, state =>
     state.snapshots[0].dominatorTree.focused === firstChild);
-  ok(doc.querySelector(`.node-${firstChild.nodeId}`).classList.contains("focused"),
+  ok(
+    doc.querySelector(`.node-${firstChild.nodeId}`).classList.contains("focused"
+    ),
      "The first child should now be focused");
 });

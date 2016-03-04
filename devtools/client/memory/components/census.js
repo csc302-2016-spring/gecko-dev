@@ -1,11 +1,12 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported Census */
 
-const { DOM: dom, createClass, PropTypes, createFactory } = require("devtools/client/shared/vendor/react");
+const { createClass, PropTypes, createFactory } = require("devtools/client/shared/vendor/react");
 const Tree = createFactory(require("devtools/client/shared/components/tree"));
 const CensusTreeItem = createFactory(require("./census-tree-item"));
-const { createParentMap } = require("../utils");
 const { TREE_ROW_HEIGHT } = require("../constants");
 const { censusModel, diffingModel } = require("../models");
 
@@ -32,7 +33,7 @@ const Census = module.exports = createClass({
     } = this.props;
 
     const report = census.report;
-    let parentMap = createParentMap(report);
+    let parentMap = census.parentMap;
     const { totalBytes, totalCount } = report;
 
     const getPercentBytes = totalBytes === 0
@@ -66,6 +67,7 @@ const Census = module.exports = createClass({
           getPercentBytes,
           getPercentCount,
           showSign: !!diffing,
+          inverted: census.inverted,
         }),
       getRoots: () => report.children || [],
       getKey: node => node.id,

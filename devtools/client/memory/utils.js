@@ -1,18 +1,21 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* global window */
 
 const { Cu, Cc, Ci } = require("chrome");
 
 Cu.import("resource://devtools/client/shared/widgets/ViewHelpers.jsm");
-const STRINGS_URI = "chrome://devtools/locale/memory.properties"
+const STRINGS_URI = "chrome://devtools/locale/memory.properties";
 const L10N = exports.L10N = new ViewHelpers.L10N(STRINGS_URI);
 
 const { OS } = require("resource://gre/modules/osfile.jsm");
 const { assert } = require("devtools/shared/DevToolsUtils");
 const { Preferences } = require("resource://gre/modules/Preferences.jsm");
 const CUSTOM_BREAKDOWN_PREF = "devtools.memory.custom-breakdowns";
-const CUSTOM_DOMINATOR_TREE_BREAKDOWN_PREF = "devtools.memory.custom-dominator-tree-breakdowns";
+const CUSTOM_DOMINATOR_TREE_BREAKDOWN_PREF =
+    "devtools.memory.custom-dominator-tree-breakdowns";
 const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 const {
   snapshotState: states,
@@ -29,7 +32,7 @@ const {
  * @param {Snapshot} snapshot
  * @return {String}
  */
-exports.getSnapshotTitle = function (snapshot) {
+exports.getSnapshotTitle = function(snapshot) {
   if (!snapshot.creationTime) {
     return L10N.getStr("snapshot-title.loading");
   }
@@ -54,7 +57,7 @@ exports.getSnapshotTitle = function (snapshot) {
  *
  * @return {Object{name, displayName}}
  */
-exports.getBreakdownDisplayData = function () {
+exports.getBreakdownDisplayData = function() {
   return exports.getBreakdownNames().map(({ name, tooltip }) => {
     // If it's a preset use the display name value
     let preset = breakdowns[name];
@@ -72,7 +75,7 @@ exports.getBreakdownDisplayData = function () {
  *
  * @return {Array<Object>}
  */
-exports.getBreakdownNames = function () {
+exports.getBreakdownNames = function() {
   let custom = exports.getCustomBreakdowns();
   return Object.keys(Object.assign({}, breakdowns, custom))
     .map(key => {
@@ -83,42 +86,44 @@ exports.getBreakdownNames = function () {
 };
 
 /**
- * Returns custom breakdowns defined in `devtools.memory.custom-breakdowns` pref.
+ * Returns custom breakdowns defined in `devtools.memory.custom-breakdowns`
+ * pref.
  *
  * @return {Object}
  */
-exports.getCustomBreakdowns = function () {
+exports.getCustomBreakdowns = function() {
   let customBreakdowns = Object.create(null);
   try {
-    customBreakdowns = JSON.parse(Preferences.get(CUSTOM_BREAKDOWN_PREF)) || Object.create(null);
+    customBreakdowns = JSON.parse(Preferences.get(CUSTOM_BREAKDOWN_PREF)) ||
+                       Object.create(null);
   } catch (e) {
     DevToolsUtils.reportException(
-      `String stored in "${CUSTOM_BREAKDOWN_PREF}" pref cannot be parsed by \`JSON.parse()\`.`);
+      `String stored in "${CUSTOM_BREAKDOWN_PREF}"
+       pref cannot be parsed by \`JSON.parse()\`.`);
   }
   return customBreakdowns;
-}
+};
 
 /**
  * Converts a breakdown preset name, like "allocationStack", and returns the
- * spec for the breakdown. Also checks properties of keys in the `devtools.memory.custom-breakdowns`
- * pref. If not found, returns an empty object.
+ * spec for the breakdown. Also checks properties of keys in the
+ * `devtools.memory.custom-breakdowns` pref. If not found, returns an empty
+ * object.
  *
  * @param {String} name
  * @return {Object}
  */
-exports.breakdownNameToSpec = function (name) {
+exports.breakdownNameToSpec = function(name) {
   let customBreakdowns = exports.getCustomBreakdowns();
 
   // If breakdown is already a breakdown, use it
   if (typeof name === "object") {
     return name;
-  }
   // If it's in our custom breakdowns, use it
-  else if (name in customBreakdowns) {
+  } else if (name in customBreakdowns) {
     return customBreakdowns[name];
-  }
   // If breakdown name is in our presets, use that
-  else if (name in breakdowns) {
+  } else if (name in breakdowns) {
     return breakdowns[name].breakdown;
   }
   return Object.create(null);
@@ -130,7 +135,7 @@ exports.breakdownNameToSpec = function (name) {
  *
  * @return {Array<Object>}
  */
-exports.getDominatorTreeBreakdownDisplayData = function () {
+exports.getDominatorTreeBreakdownDisplayData = function() {
   return exports.getDominatorTreeBreakdownNames().map(({ name, tooltip }) => {
     // If it's a preset use the display name value
     let preset = dominatorTreeBreakdowns[name];
@@ -148,7 +153,7 @@ exports.getDominatorTreeBreakdownDisplayData = function () {
  *
  * @return {Array<Breakdown>}
  */
-exports.getDominatorTreeBreakdownNames = function () {
+exports.getDominatorTreeBreakdownNames = function() {
   let custom = exports.getCustomDominatorTreeBreakdowns();
   return Object.keys(Object.assign({}, dominatorTreeBreakdowns, custom))
     .map(key => {
@@ -159,17 +164,21 @@ exports.getDominatorTreeBreakdownNames = function () {
 };
 
 /**
- * Returns custom breakdowns defined in `devtools.memory.custom-dominator-tree-breakdowns` pref.
+ * Returns custom breakdowns defined in
+ * `devtools.memory.custom-dominator-tree-breakdowns` pref.
  *
  * @return {Object}
  */
-exports.getCustomDominatorTreeBreakdowns = function () {
+exports.getCustomDominatorTreeBreakdowns = function() {
   let customBreakdowns = Object.create(null);
   try {
-    customBreakdowns = JSON.parse(Preferences.get(CUSTOM_DOMINATOR_TREE_BREAKDOWN_PREF)) || Object.create(null);
+    customBreakdowns =
+        JSON.parse(Preferences.get(CUSTOM_DOMINATOR_TREE_BREAKDOWN_PREF)) ||
+                   Object.create(null);
   } catch (e) {
     DevToolsUtils.reportException(
-      `String stored in "${CUSTOM_BREAKDOWN_PREF}" pref cannot be parsed by \`JSON.parse()\`.`);
+      `String stored in "${CUSTOM_BREAKDOWN_PREF}"
+       pref cannot be parsed by \`JSON.parse()\`.`);
   }
   return customBreakdowns;
 };
@@ -183,7 +192,7 @@ exports.getCustomDominatorTreeBreakdowns = function () {
  * @param {String} name
  * @return {Object}
  */
-exports.dominatorTreeBreakdownNameToSpec = function (name) {
+exports.dominatorTreeBreakdownNameToSpec = function(name) {
   let customBreakdowns = exports.getCustomDominatorTreeBreakdowns();
 
   // If breakdown is already a breakdown, use it.
@@ -211,7 +220,7 @@ exports.dominatorTreeBreakdownNameToSpec = function (name) {
  * @param {snapshotState | diffingState} state
  * @return {String}
  */
-exports.getStatusText = function (state) {
+exports.getStatusText = function(state) {
   assert(state, "Must have a state");
 
   switch (state) {
@@ -274,7 +283,7 @@ exports.getStatusText = function (state) {
  * @param {snapshotState | diffingState} state
  * @return {String}
  */
-exports.getStatusTextFull = function (state) {
+exports.getStatusTextFull = function(state) {
   assert(!!state, "Must have a state");
 
   switch (state) {
@@ -352,7 +361,7 @@ exports.snapshotIsDiffable = function snapshotIsDiffable(snapshot) {
  * @param {snapshotId} id
  * @return {snapshotModel|null}
  */
-exports.getSnapshot = function getSnapshot (state, id) {
+exports.getSnapshot = function getSnapshot(state, id) {
   const found = state.snapshots.find(s => s.id === id);
   assert(found, `No matching snapshot found with id = ${id}`);
   return found;
@@ -397,7 +406,7 @@ exports.createSnapshot = function createSnapshot(state) {
  * @param {Any} obj2
  * @return {Boolean}
  */
-const breakdownEquals = exports.breakdownEquals = function (obj1, obj2) {
+const breakdownEquals = exports.breakdownEquals = function(obj1, obj2) {
   let type1 = typeof obj1;
   let type2 = typeof obj2;
 
@@ -411,10 +420,11 @@ const breakdownEquals = exports.breakdownEquals = function (obj1, obj2) {
   }
 
   if (Array.isArray(obj1)) {
-    if (obj1.length !== obj2.length) { return false; }
-    return obj1.every((_, i) => exports.breakdownEquals(obj[1], obj2[i]));
-  }
-  else if (type1 === "object") {
+    if (obj1.length !== obj2.length) {
+      return false;
+    }
+    return obj1.every((_, i) => exports.breakdownEquals(obj1[1], obj2[i]));
+  } else if (type1 === "object") {
     let k1 = Object.keys(obj1);
     let k2 = Object.keys(obj2);
 
@@ -439,7 +449,7 @@ const breakdownEquals = exports.breakdownEquals = function (obj1, obj2) {
  *
  * @returns {Boolean}
  */
-exports.censusIsUpToDate = function (inverted, filter, breakdown, census) {
+exports.censusIsUpToDate = function(inverted, filter, breakdown, census) {
   return census
       && inverted === census.inverted
       && filter === census.filter
@@ -453,7 +463,7 @@ exports.censusIsUpToDate = function (inverted, filter, breakdown, census) {
  * @param {SnapshotModel} snapshot
  * @returns {Boolean}
  */
-exports.dominatorTreeIsComputed = function (snapshot) {
+exports.dominatorTreeIsComputed = function(snapshot) {
   return snapshot.dominatorTree &&
     (snapshot.dominatorTree.state === dominatorTreeState.COMPUTED ||
      snapshot.dominatorTree.state === dominatorTreeState.LOADED ||
@@ -467,7 +477,7 @@ exports.dominatorTreeIsComputed = function (snapshot) {
  * @param {CensusModel} census
  * @return {Object}
  */
-exports.getSnapshotTotals = function (census) {
+exports.getSnapshotTotals = function(census) {
   let bytes = 0;
   let count = 0;
 
@@ -487,9 +497,10 @@ exports.getSnapshotTotals = function (census) {
  * @param {String} .title
  *        The title displayed in the file picker window.
  * @param {Array<Array<String>>} .filters
- *        An array of filters to display in the file picker. Each filter in the array
- *        is a duple of two strings, one a name for the filter, and one the filter itself
- *        (like "*.json").
+ *        An array of filters to display in the file picker. Each filter in the
+ *        array is a duple of two strings, one a name for the filter, and one
+ *        the filter itself (like "*.json").
+ *
  * @param {String} .defaultName
  *        The default name chosen by the file picker window.
  * @param {String} .mode
@@ -498,8 +509,13 @@ exports.getSnapshotTotals = function (census) {
  *        The file selected by the user, or null, if cancelled.
  */
 exports.openFilePicker = function({ title, filters, defaultName, mode }) {
-  mode = mode === "save" ? Ci.nsIFilePicker.modeSave :
-         mode === "open" ? Ci.nsIFilePicker.modeOpen : null;
+  if (mode === "save") {
+    Ci.nsIFilePicker.modeSave;
+  } else if (mode === "open") {
+    Ci.nsIFilePicker.modeOpen;
+  } else {
+    null;
+  }
 
   if (mode == void 0) {
     throw new Error("No valid mode specified for nsIFilePicker.");
@@ -560,25 +576,4 @@ exports.formatNumber = function(number, showSign = false) {
 exports.formatPercent = function(percent, showSign = false) {
   return exports.L10N.getFormatStr("tree-item.percent",
                            exports.formatNumber(percent, showSign));
-};
-
-/**
- * Creates a hash map mapping node IDs to its parent node.
- *
- * @param {CensusTreeNode} node
- * @param {Object<number, TreeNode>} aggregator
- *
- * @return {Object<number, TreeNode>}
- */
-const createParentMap = exports.createParentMap = function (node,
-                                                            getId = node => node.id,
-                                                            aggregator = Object.create(null)) {
-  if (node.children) {
-    for (let child of node.children) {
-      aggregator[getId(child)] = node;
-      createParentMap(child, getId, aggregator);
-    }
-  }
-
-  return aggregator;
 };

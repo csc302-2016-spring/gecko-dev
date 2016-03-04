@@ -7,21 +7,18 @@
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://devtools/client/framework/gDevTools.jsm");
-Cu.import("resource://devtools/shared/event-emitter.js");
-Cu.import("resource://devtools/client/shared/widgets/ViewHelpers.jsm");
-XPCOMUtils.defineLazyModuleGetter(this, "SystemAppProxy",
-                                  "resource://gre/modules/SystemAppProxy.jsm");
-
-var { require } = Cu.import("resource://devtools/shared/Loader.jsm", {});
+var { loader, require } = Cu.import("resource://devtools/shared/Loader.jsm", {});
 var Telemetry = require("devtools/client/shared/telemetry");
 var { showDoorhanger } = require("devtools/client/shared/doorhanger");
 var { TouchEventSimulator } = require("devtools/shared/touch/simulator");
 var { Task } = require("resource://gre/modules/Task.jsm");
 var promise = require("promise");
 var DevToolsUtils = require("devtools/shared/DevToolsUtils");
+var Services = require("Services");
+var EventEmitter = require("devtools/shared/event-emitter");
+var { ViewHelpers } = require("devtools/client/shared/widgets/ViewHelpers.jsm");
+loader.lazyImporter(this, "SystemAppProxy",
+                    "resource://gre/modules/SystemAppProxy.jsm");
 
 this.EXPORTED_SYMBOLS = ["ResponsiveUIManager"];
 
@@ -66,12 +63,18 @@ var Manager = {
    *
    * @param aWindow the main window.
    * @param aTab the tab targeted.
+   * @returns {ResponsiveUI} the instance of ResponsiveUI for the current tab.
    */
-  runIfNeeded: function(aWindow, aTab) {
+  runIfNeeded: Task.async(function*(aWindow, aTab) {
+    let ui;
     if (!this.isActiveForTab(aTab)) {
-      new ResponsiveUI(aWindow, aTab);
+      ui = new ResponsiveUI(aWindow, aTab);
+      yield ui.inited;
+    } else {
+      ui = this.getResponsiveUIForTab(aTab);
     }
-  },
+    return ui;
+  }),
 
   /**
    * Returns true if responsive view is active for the provided tab.
@@ -100,9 +103,7 @@ var Manager = {
   handleGcliCommand: Task.async(function*(aWindow, aTab, aCommand, aArgs) {
     switch (aCommand) {
       case "resize to":
-        this.runIfNeeded(aWindow, aTab);
-        let ui = ActiveTabs.get(aTab);
-        yield ui.inited;
+        let ui = yield this.runIfNeeded(aWindow, aTab);
         ui.setSize(aArgs.width, aArgs.height);
         break;
       case "resize on":
@@ -1092,6 +1093,6 @@ ResponsiveUI.prototype = {
   },
 }
 
-XPCOMUtils.defineLazyGetter(ResponsiveUI.prototype, "strings", function () {
+loader.lazyGetter(ResponsiveUI.prototype, "strings", function () {
   return Services.strings.createBundle("chrome://devtools/locale/responsiveUI.properties");
 });

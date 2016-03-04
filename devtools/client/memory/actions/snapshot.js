@@ -2,6 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* exported takeSnapshotAndCensus, selectSnapshotAndRefresh,
+   refreshSelectedCensus, fetchImmediatelyDominated,
+   refreshSelectedDominatorTree, clearSnapshots, expandCensusNode,
+   collapseCensusNode, focusCensusNode, expandDominatorTreeNode,
+   collapseDominatorTreeNode, focusDominatorTreeNode */
 
 const { assert, reportException } = require("devtools/shared/DevToolsUtils");
 const {
@@ -11,7 +16,9 @@ const {
   createSnapshot,
   dominatorTreeIsComputed,
 } = require("../utils");
-const { actions, snapshotState: states, viewState, dominatorTreeState } = require("../constants");
+const { actions, snapshotState: states,
+        viewState, dominatorTreeState } = require("../constants");
+const telemetry = require("../telemetry");
 const view = require("./view");
 const refresh = require("./refresh");
 
@@ -23,8 +30,9 @@ const refresh = require("./refresh");
  * @param {HeapAnalysesClient}
  * @param {Object}
  */
-const takeSnapshotAndCensus = exports.takeSnapshotAndCensus = function (front, heapWorker) {
-  return function *(dispatch, getState) {
+const takeSnapshotAndCensus =
+exports.takeSnapshotAndCensus = function(front, heapWorker) {
+  return function*(dispatch, getState) {
     const id = yield dispatch(takeSnapshot(front));
     if (id === null) {
       return;
@@ -48,8 +56,9 @@ const takeSnapshotAndCensus = exports.takeSnapshotAndCensus = function (front, h
  * @param {HeapAnalysesClient} heapWorker
  * @param {snapshotId} id
  */
-const selectSnapshotAndRefresh = exports.selectSnapshotAndRefresh = function (heapWorker, id) {
-  return function *(dispatch, getState) {
+const selectSnapshotAndRefresh =
+exports.selectSnapshotAndRefresh = function(heapWorker, id) {
+  return function*(dispatch, getState) {
     if (getState().diffing) {
       dispatch(view.changeView(viewState.CENSUS));
     }
@@ -65,8 +74,10 @@ const selectSnapshotAndRefresh = exports.selectSnapshotAndRefresh = function (he
  * @param {MemoryFront} front
  * @returns {Number|null}
  */
-const takeSnapshot = exports.takeSnapshot = function (front) {
-  return function *(dispatch, getState) {
+const takeSnapshot = exports.takeSnapshot = function(front) {
+  return function*(dispatch, getState) {
+    telemetry.countTakeSnapshot();
+
     if (getState().diffing) {
       dispatch(view.changeView(viewState.CENSUS));
     }
@@ -97,11 +108,13 @@ const takeSnapshot = exports.takeSnapshot = function (front) {
  * @param {HeapAnalysesClient} heapWorker
  * @param {snapshotId} id
  */
-const readSnapshot = exports.readSnapshot = function readSnapshot (heapWorker, id) {
-  return function *(dispatch, getState) {
+const readSnapshot =
+exports.readSnapshot = function readSnapshot(heapWorker, id) {
+  return function*(dispatch, getState) {
     const snapshot = getSnapshot(getState(), id);
     assert([states.SAVED, states.IMPORTING].includes(snapshot.state),
-      `Should only read a snapshot once. Found snapshot in state ${snapshot.state}`);
+      `Should only read a snapshot once.
+       Found snapshot in state ${snapshot.state}`);
 
     let creationTime;
 
@@ -127,13 +140,14 @@ const readSnapshot = exports.readSnapshot = function readSnapshot (heapWorker, i
  * @see `devtools/shared/heapsnapshot/HeapAnalysesClient.js`
  * @see `js/src/doc/Debugger/Debugger.Memory.md` for breakdown details
  */
-const takeCensus = exports.takeCensus = function (heapWorker, id) {
-  return function *(dispatch, getState) {
+const takeCensus = exports.takeCensus = function(heapWorker, id) {
+  return function*(dispatch, getState) {
     const snapshot = getSnapshot(getState(), id);
     assert([states.READ, states.SAVED_CENSUS].includes(snapshot.state),
-      `Can only take census of snapshots in READ or SAVED_CENSUS state, found ${snapshot.state}`);
+      `Can only take census of snapshots in READ or SAVED_CENSUS state,
+       found ${snapshot.state}`);
 
-    let report;
+    let report, parentMap;
     let inverted = getState().inverted;
     let breakdown = getState().breakdown;
     let filter = getState().filter;
@@ -163,7 +177,9 @@ const takeCensus = exports.takeCensus = function (heapWorker, id) {
       opts.filter = filter || null;
 
       try {
-        report = yield heapWorker.takeCensus(snapshot.path, { breakdown }, opts);
+        ({ report, parentMap } = yield heapWorker.takeCensus(snapshot.path,
+                                                             { breakdown },
+                                                             opts));
       } catch (error) {
         reportException("takeCensus", error);
         dispatch({ type: actions.SNAPSHOT_ERROR, id, error });
@@ -180,8 +196,11 @@ const takeCensus = exports.takeCensus = function (heapWorker, id) {
       breakdown,
       inverted,
       filter,
-      report
+      report,
+      parentMap
     });
+
+    telemetry.countCensus({ inverted, filter, breakdown });
   };
 };
 
@@ -191,7 +210,8 @@ const takeCensus = exports.takeCensus = function (heapWorker, id) {
  *
  * @param {HeapAnalysesClient} heapWorker
  */
-const refreshSelectedCensus = exports.refreshSelectedCensus = function (heapWorker) {
+const refreshSelectedCensus =
+exports.refreshSelectedCensus = function(heapWorker) {
   return function*(dispatch, getState) {
     let snapshot = getState().snapshots.find(s => s.selected);
 
@@ -216,7 +236,8 @@ const refreshSelectedCensus = exports.refreshSelectedCensus = function (heapWork
  *
  * @returns {Promise<DominatorTreeId>}
  */
-const computeDominatorTree = exports.computeDominatorTree = function (heapWorker, id) {
+const computeDominatorTree =
+exports.computeDominatorTree = function(heapWorker, id) {
   return function*(dispatch, getState) {
     const snapshot = getSnapshot(getState(), id);
     assert(!(snapshot.dominatorTree && snapshot.dominatorTree.dominatorTreeId),
@@ -247,7 +268,8 @@ const computeDominatorTree = exports.computeDominatorTree = function (heapWorker
  *
  * @returns {Promise<DominatorTreeNode>}
  */
-const fetchDominatorTree = exports.fetchDominatorTree = function (heapWorker, id) {
+const fetchDominatorTree =
+exports.fetchDominatorTree = function(heapWorker, id) {
   return function*(dispatch, getState) {
     const snapshot = getSnapshot(getState(), id);
     assert(dominatorTreeIsComputed(snapshot),
@@ -275,6 +297,7 @@ const fetchDominatorTree = exports.fetchDominatorTree = function (heapWorker, id
     while (!breakdownEquals(breakdown, getState().dominatorTreeBreakdown));
 
     dispatch({ type: actions.FETCH_DOMINATOR_TREE_END, id, root });
+    telemetry.countDominatorTree({ breakdown });
     return root;
   };
 };
@@ -287,14 +310,15 @@ const fetchDominatorTree = exports.fetchDominatorTree = function (heapWorker, id
  * @param {SnapshotId} id
  * @param {DominatorTreeLazyChildren} lazyChildren
  */
-const fetchImmediatelyDominated = exports.fetchImmediatelyDominated = function (heapWorker, id, lazyChildren) {
+const fetchImmediatelyDominated =
+exports.fetchImmediatelyDominated = function(heapWorker, id, lazyChildren) {
   return function*(dispatch, getState) {
     const snapshot = getSnapshot(getState(), id);
     assert(snapshot.dominatorTree, "Should have dominator tree model");
     assert(snapshot.dominatorTree.state === dominatorTreeState.LOADED ||
-           snapshot.dominatorTree.state === dominatorTreeState.INCREMENTAL_FETCHING,
-           "Cannot fetch immediately dominated nodes in a dominator tree unless " +
-           " the dominator tree has already been computed");
+       snapshot.dominatorTree.state === dominatorTreeState.INCREMENTAL_FETCHING,
+       "Cannot fetch immediately dominated nodes in a dominator tree unless " +
+       " the dominator tree has already been computed");
 
     let breakdown;
     let response;
@@ -338,9 +362,11 @@ const fetchImmediatelyDominated = exports.fetchImmediatelyDominated = function (
  *
  * @returns {Promise<DominatorTreeNode>}
  */
-const computeAndFetchDominatorTree = exports.computeAndFetchDominatorTree = function (heapWorker, id) {
+const computeAndFetchDominatorTree =
+exports.computeAndFetchDominatorTree = function(heapWorker, id) {
   return function*(dispatch, getState) {
-    const dominatorTreeId = yield dispatch(computeDominatorTree(heapWorker, id));
+    const dominatorTreeId = yield dispatch(computeDominatorTree(heapWorker,
+                                                                id));
     if (dominatorTreeId === null) {
       return null;
     }
@@ -359,7 +385,8 @@ const computeAndFetchDominatorTree = exports.computeAndFetchDominatorTree = func
  *
  * @param {HeapAnalysesClient} heapWorker
  */
-const refreshSelectedDominatorTree = exports.refreshSelectedDominatorTree = function (heapWorker) {
+const refreshSelectedDominatorTree =
+exports.refreshSelectedDominatorTree = function(heapWorker) {
   return function*(dispatch, getState) {
     let snapshot = getState().snapshots.find(s => s.selected);
     if (!snapshot) {
@@ -369,7 +396,8 @@ const refreshSelectedDominatorTree = exports.refreshSelectedDominatorTree = func
     if (snapshot.dominatorTree &&
         !(snapshot.dominatorTree.state === dominatorTreeState.COMPUTED ||
           snapshot.dominatorTree.state === dominatorTreeState.LOADED ||
-          snapshot.dominatorTree.state === dominatorTreeState.INCREMENTAL_FETCHING)) {
+          snapshot.dominatorTree.state ===
+          dominatorTreeState.INCREMENTAL_FETCHING)) {
       return;
     }
 
@@ -399,7 +427,7 @@ const refreshSelectedDominatorTree = exports.refreshSelectedDominatorTree = func
  * @param {snapshotId} id
  * @see {Snapshot} model defined in devtools/client/memory/models.js
  */
-const selectSnapshot = exports.selectSnapshot = function (id) {
+const selectSnapshot = exports.selectSnapshot = function(id) {
   return {
     type: actions.SELECT_SNAPSHOT,
     id
@@ -411,7 +439,8 @@ const selectSnapshot = exports.selectSnapshot = function (id) {
  *
  * @param {HeapAnalysesClient} heapWorker
  */
-const clearSnapshots = exports.clearSnapshots = function (heapWorker) {
+const clearSnapshots =
+exports.clearSnapshots = function(heapWorker) {
   return function*(dispatch, getState) {
     let snapshots = getState().snapshots.filter(
       s => s.state === states.SAVED_CENSUS || s.state === states.ERROR);
@@ -420,11 +449,10 @@ const clearSnapshots = exports.clearSnapshots = function (heapWorker) {
 
     dispatch({ type: actions.DELETE_SNAPSHOTS_START, ids });
 
-    Promise.all(snapshots.map(s => {
-      heapWorker.deleteHeapSnapshot(s.path)
-      .catch(error => {
+    yield Promise.all(snapshots.map(snapshot => {
+      return heapWorker.deleteHeapSnapshot(snapshot.path).catch(error => {
         reportException("clearSnapshots", error);
-        dispatch({ type: actions.SNAPSHOT_ERROR, id: s.id, error });
+        dispatch({ type: actions.SNAPSHOT_ERROR, id: snapshot.id, error });
       });
     }));
 
@@ -437,7 +465,7 @@ const clearSnapshots = exports.clearSnapshots = function (heapWorker) {
  *
  * @param {CensusTreeNode} node
  */
-const expandCensusNode = exports.expandCensusNode = function (id, node) {
+const expandCensusNode = exports.expandCensusNode = function(id, node) {
   return {
     type: actions.EXPAND_CENSUS_NODE,
     id,
@@ -450,7 +478,7 @@ const expandCensusNode = exports.expandCensusNode = function (id, node) {
  *
  * @param {CensusTreeNode} node
  */
-const collapseCensusNode = exports.collapseCensusNode = function (id, node) {
+const collapseCensusNode = exports.collapseCensusNode = function(id, node) {
   return {
     type: actions.COLLAPSE_CENSUS_NODE,
     id,
@@ -464,7 +492,7 @@ const collapseCensusNode = exports.collapseCensusNode = function (id, node) {
  * @param {SnapshotId} id
  * @param {DominatorTreeNode} node
  */
-const focusCensusNode = exports.focusCensusNode = function (id, node) {
+const focusCensusNode = exports.focusCensusNode = function(id, node) {
   return {
     type: actions.FOCUS_CENSUS_NODE,
     id,
@@ -477,7 +505,8 @@ const focusCensusNode = exports.focusCensusNode = function (id, node) {
  *
  * @param {DominatorTreeTreeNode} node
  */
-const expandDominatorTreeNode = exports.expandDominatorTreeNode = function (id, node) {
+const expandDominatorTreeNode =
+exports.expandDominatorTreeNode = function(id, node) {
   return {
     type: actions.EXPAND_DOMINATOR_TREE_NODE,
     id,
@@ -490,7 +519,8 @@ const expandDominatorTreeNode = exports.expandDominatorTreeNode = function (id, 
  *
  * @param {DominatorTreeTreeNode} node
  */
-const collapseDominatorTreeNode = exports.collapseDominatorTreeNode = function (id, node) {
+const collapseDominatorTreeNode =
+exports.collapseDominatorTreeNode = function(id, node) {
   return {
     type: actions.COLLAPSE_DOMINATOR_TREE_NODE,
     id,
@@ -504,7 +534,8 @@ const collapseDominatorTreeNode = exports.collapseDominatorTreeNode = function (
  * @param {SnapshotId} id
  * @param {DominatorTreeNode} node
  */
-const focusDominatorTreeNode = exports.focusDominatorTreeNode = function (id, node) {
+const focusDominatorTreeNode =
+exports.focusDominatorTreeNode = function(id, node) {
   return {
     type: actions.FOCUS_DOMINATOR_TREE_NODE,
     id,

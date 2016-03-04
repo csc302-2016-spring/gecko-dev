@@ -4,7 +4,6 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://devtools/content/shared/widgets/widgets.css" type="text/css"?>
-<?xml-stylesheet href="chrome://devtools/skin/common.css" type="text/css"?>
 <?xml-stylesheet href="chrome://devtools/skin/widgets.css" type="text/css"?>
 <?xml-stylesheet href="chrome://devtools/skin/performance.css" type="text/css"?>
 <?xml-stylesheet href="chrome://devtools/skin/jit-optimizations.css" type="text/css"?>
@@ -37,6 +36,12 @@
                 data-pref="show-platform-data"
                 label="&performanceUI.showPlatformData;"
                 tooltiptext="&performanceUI.showPlatformData.tooltiptext;"/>
+      <menuitem id="option-show-jit-optimizations"
+                class="experimental-option"
+                type="checkbox"
+                data-pref="show-jit-optimizations"
+                label="&performanceUI.showJITOptimizations;"
+                tooltiptext="&performanceUI.showJITOptimizations.tooltiptext;"/>
       <menuitem id="option-enable-memory"
                 class="experimental-option"
                 type="checkbox"
@@ -68,12 +73,6 @@
                 data-pref="flatten-tree-recursion"
                 label="&performanceUI.flattenTreeRecursion;"
                 tooltiptext="&performanceUI.flattenTreeRecursion.tooltiptext;"/>
-      <menuitem id="option-enable-jit-optimizations"
-                class="experimental-option"
-                type="checkbox"
-                data-pref="enable-jit-optimizations"
-                label="&performanceUI.enableJITOptimizations;"
-                tooltiptext="&performanceUI.enableJITOptimizations.tooltiptext;"/>
     </menupopup>
   </popupset>
 

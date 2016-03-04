@@ -2,6 +2,7 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test selecting snapshots for diffing.
+"use strict";
 
 const { diffingState, snapshotState } = require("devtools/client/memory/constants");
 const {
@@ -14,7 +15,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -51,7 +52,8 @@ add_task(function *() {
   } catch (error) {
     threw = true;
   }
-  ok(threw, "Should not be able to select snapshots that aren't ready for diffing");
+  ok(threw,
+     "Should not be able to select snapshots that aren't ready for diffing");
 
   // Select first snapshot for diffing.
   dispatch(selectSnapshotForDiffing(getState().snapshots[0]));

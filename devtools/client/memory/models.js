@@ -1,6 +1,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported appModel */
 
 const { assert } = require("devtools/shared/DevToolsUtils");
 const { MemoryFront } = require("devtools/server/actors/memory");
@@ -35,10 +37,12 @@ const {
  *     });
  */
 function catchAndIgnore(fn) {
-  return function (...args) {
+  return function(...args) {
     try {
       fn(...args);
-    } catch (err) { }
+    } catch (err) {
+      // Do nothing
+    }
 
     return null;
   };
@@ -50,12 +54,14 @@ function catchAndIgnore(fn) {
  * @see `js/src/doc/Debugger/Debugger.Memory.md`
  */
 let breakdownModel = exports.breakdown = PropTypes.shape({
-  by: PropTypes.oneOf(["coarseType", "allocationStack", "objectClass", "internalType"]).isRequired,
+  by: PropTypes.string.isRequired,
 });
 
 let censusModel = exports.censusModel = PropTypes.shape({
   // The current census report data.
   report: PropTypes.object,
+  // The parent map for the report.
+  parentMap: PropTypes.object,
   // The breakdown used to generate the current census
   breakdown: breakdownModel,
   // Whether the currently cached report tree is inverted or not.
@@ -64,10 +70,11 @@ let censusModel = exports.censusModel = PropTypes.shape({
   // the tree items.
   filter: PropTypes.string,
   // The Set<CensusTreeNode.id> of expanded node ids in the report tree.
-  expanded: catchAndIgnore(function (census) {
+  expanded: catchAndIgnore(function(census) {
     if (census.report) {
       assert(census.expanded,
-             "If we have a report, we should also have the set of expanded nodes");
+             "If we have a report, " +
+             "we should also have the set of expanded nodes");
     }
   }),
   // If a node is currently focused in the report tree, then this is it.
@@ -106,7 +113,7 @@ let dominatorTreeModel = exports.dominatorTreeModel = PropTypes.shape({
   activeFetchRequestCount: PropTypes.number,
 
   // The dominatorTreeState that this domintor tree is currently in.
-  state: catchAndIgnore(function (dominatorTree) {
+  state: catchAndIgnore(function(dominatorTree) {
     switch (dominatorTree.state) {
       case dominatorTreeState.COMPUTING:
         assert(dominatorTree.dominatorTreeId == null,
@@ -129,10 +136,11 @@ let dominatorTreeModel = exports.dominatorTreeModel = PropTypes.shape({
 
       case dominatorTreeState.INCREMENTAL_FETCHING:
         assert(typeof dominatorTree.activeFetchRequestCount === "number",
-               "The active fetch request count is a number when we are in the " +
-               "INCREMENTAL_FETCHING state");
+               "The active fetch request count is a number when we are " +
+               "in the INCREMENTAL_FETCHING state");
         assert(dominatorTree.activeFetchRequestCount > 0,
-               "We are keeping track of how many active requests are in flight.");
+               "We are keeping track of how many active requests " +
+               "are in flight.");
         // Fall through...
       case dominatorTreeState.LOADED:
         assert(dominatorTree.dominatorTreeId != null,
@@ -183,23 +191,29 @@ let snapshotModel = exports.snapshot = PropTypes.shape({
   creationTime: PropTypes.number,
   // The current state the snapshot is in.
   // @see ./constants.js
-  state: catchAndIgnore(function (snapshot, propName) {
+  state: catchAndIgnore(function(snapshot, propName) {
     let current = snapshot.state;
-    let shouldHavePath = [states.IMPORTING, states.SAVED, states.READ, states.SAVING_CENSUS, states.SAVED_CENSUS];
-    let shouldHaveCreationTime = [states.READ, states.SAVING_CENSUS, states.SAVED_CENSUS];
+    let shouldHavePath = [states.IMPORTING, states.SAVED, states.READ,
+                          states.SAVING_CENSUS, states.SAVED_CENSUS];
+    let shouldHaveCreationTime = [states.READ, states.SAVING_CENSUS,
+                                  states.SAVED_CENSUS];
     let shouldHaveCensus = [states.SAVED_CENSUS];
 
     if (!stateKeys.includes(current)) {
       throw new Error(`Snapshot state must be one of ${stateKeys}.`);
     }
     if (shouldHavePath.includes(current) && !snapshot.path) {
-      throw new Error(`Snapshots in state ${current} must have a snapshot path.`);
+      throw new Error(`Snapshots in state ${current}
+                       must have a snapshot path.`);
     }
-    if (shouldHaveCensus.includes(current) && (!snapshot.census || !snapshot.census.breakdown)) {
-      throw new Error(`Snapshots in state ${current} must have a census and breakdown.`);
+    if (shouldHaveCensus.includes(current) &&
+       (!snapshot.census || !snapshot.census.breakdown)) {
+      throw new Error(`Snapshots in state ${current}
+                       must have a census and breakdown.`);
     }
     if (shouldHaveCreationTime.includes(current) && !snapshot.creationTime) {
-      throw new Error(`Snapshots in state ${current} must have a creation time.`);
+      throw new Error(`Snapshots in state ${current}
+                       must have a creation time.`);
     }
   }),
 });
@@ -217,7 +231,7 @@ let diffingModel = exports.diffingModel = PropTypes.shape({
   firstSnapshotId: snapshotId,
 
   // The id of the second snapshot to diff.
-  secondSnapshotId: catchAndIgnore(function (diffing, propName) {
+  secondSnapshotId: catchAndIgnore(function(diffing, propName) {
     if (diffing.secondSnapshotId && !diffing.firstSnapshotId) {
       throw new Error("Cannot have second snapshot without already having " +
                       "first snapshot");
@@ -234,7 +248,7 @@ let diffingModel = exports.diffingModel = PropTypes.shape({
 
   // The current state the diffing is in.
   // @see ./constants.js
-  state: catchAndIgnore(function (diffing) {
+  state: catchAndIgnore(function(diffing) {
     switch (diffing.state) {
       case diffingState.TOOK_DIFF:
         assert(diffing.census, "If we took a diff, we should have a census");
@@ -290,7 +304,7 @@ let appModel = exports.app = {
   diffing: diffingModel,
 
   // The current type of view.
-  view: catchAndIgnore(function (app) {
+  view: catchAndIgnore(function(app) {
     switch (app.view) {
       case viewState.CENSUS:
         assert(!app.diffing, "Should not be diffing");

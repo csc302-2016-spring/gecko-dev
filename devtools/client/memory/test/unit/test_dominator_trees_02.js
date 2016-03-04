@@ -3,6 +3,7 @@
 
 // Test that selecting the dominator tree view automatically kicks off fetching
 // and computing dominator trees.
+"use strict";
 
 const {
   snapshotState: states,
@@ -20,7 +21,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();

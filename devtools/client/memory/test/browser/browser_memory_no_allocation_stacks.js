@@ -21,8 +21,10 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
      "Should not be recording allocagtions");
 
   yield dispatch(takeSnapshotAndCensus(front, heapWorker));
-  yield dispatch(breakdownActions.setBreakdownAndRefresh(heapWorker,
-                                                         breakdowns.allocationStack.breakdown));
+  yield dispatch(
+   breakdownActions.setBreakdownAndRefresh(heapWorker,
+     breakdowns.allocationStack.breakdown)
+   );
 
   is(getState().breakdown.by, "allocationStack",
      "Should be using allocation stack breakdown");
@@ -31,5 +33,6 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
      "Should still not be recording allocagtions");
 
   ok(doc.querySelector(".no-allocation-stacks"),
-     "Because we did not record allocations, the no-allocation-stack warning should be visible");
+     "Because we did not record allocations, " +
+     "the no-allocation-stack warning should be visible");
 });

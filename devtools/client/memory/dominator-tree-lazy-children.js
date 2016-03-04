@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
 
 /**
  * The `DominatorTreeLazyChildren` is a placeholder that represents a future
@@ -22,8 +23,9 @@ function DominatorTreeLazyChildren(parentNodeId, siblingIndex) {
  *
  * @returns {String}
  */
-DominatorTreeLazyChildren.prototype.key = function () {
-  return `dominator-tree-lazy-children-${this._parentNodeId}-${this._siblingIndex}`;
+DominatorTreeLazyChildren.prototype.key = function() {
+  return `dominator-tree-lazy-children-${this._parentNodeId}
+  		  -${this._siblingIndex}`;
 };
 
 /**
@@ -33,7 +35,7 @@ DominatorTreeLazyChildren.prototype.key = function () {
  *
  * @returns {Boolean}
  */
-DominatorTreeLazyChildren.prototype.isFirstChild = function () {
+DominatorTreeLazyChildren.prototype.isFirstChild = function() {
   return this._siblingIndex === 0;
 };
 
@@ -42,7 +44,7 @@ DominatorTreeLazyChildren.prototype.isFirstChild = function () {
  *
  * @returns {NodeId}
  */
-DominatorTreeLazyChildren.prototype.parentNodeId = function () {
+DominatorTreeLazyChildren.prototype.parentNodeId = function() {
   return this._parentNodeId;
 };
 
@@ -51,7 +53,7 @@ DominatorTreeLazyChildren.prototype.parentNodeId = function () {
  *
  * @returns {Number}
  */
-DominatorTreeLazyChildren.prototype.siblingIndex = function () {
+DominatorTreeLazyChildren.prototype.siblingIndex = function() {
   return this._siblingIndex;
 };
 

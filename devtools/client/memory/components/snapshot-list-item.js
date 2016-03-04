@@ -1,8 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported SnapshotListItem, index */
 
-const { assert } = require("devtools/shared/DevToolsUtils");
 const { DOM: dom, createClass, PropTypes } = require("devtools/client/shared/vendor/react");
 const {
   L10N,
@@ -25,8 +26,9 @@ const SnapshotListItem = module.exports = createClass({
   },
 
   render() {
-    let { index, item: snapshot, onClick, onSave, diffing } = this.props;
-    let className = `snapshot-list-item ${snapshot.selected ? " selected" : ""}`;
+    let { item: snapshot, onClick, onSave, diffing } = this.props;
+    let className = `snapshot-list-item
+                     ${snapshot.selected ? " selected" : ""}`;
     let statusText = getStatusText(snapshot.state);
     let wantThrobber = !!statusText;
     let title = getSnapshotTitle(snapshot);
@@ -63,7 +65,8 @@ const SnapshotListItem = module.exports = createClass({
     let details;
     if (!selectedForDiffing && snapshot.state === states.SAVED_CENSUS) {
       let { bytes } = getSnapshotTotals(snapshot.census);
-      let formatBytes = L10N.getFormatStr("aggregate.mb", L10N.numberWithDecimals(bytes / 1000000, 2));
+      let formatBytes = L10N.getFormatStr("aggregate.mb",
+                                   L10N.numberWithDecimals(bytes / 1000000, 2));
 
       details = dom.span({ className: "snapshot-totals" },
         dom.span({ className: "total-bytes" }, formatBytes)
@@ -79,7 +82,8 @@ const SnapshotListItem = module.exports = createClass({
 
     return (
       dom.li({ className, onClick },
-        dom.span({ className: `snapshot-title ${wantThrobber ? " devtools-throbber" : ""}` },
+        dom.span({ className: `snapshot-title
+                               ${wantThrobber ? " devtools-throbber" : ""}` },
           checkbox,
           title
         ),

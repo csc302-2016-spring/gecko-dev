@@ -6,6 +6,7 @@
 // HeapSnapshotFileActor to get the heap snapshot file.
 
 "use strict";
+/* global ChromeUtils, HeapSnapshot */
 
 const TEST_URL = "data:text/html,<html><body></body></html>";
 

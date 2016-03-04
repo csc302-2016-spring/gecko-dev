@@ -2,13 +2,15 @@
 <html>
     <body>
         <script>
+         "use strict";
          var objects = window.objects = [];
 
-         var allocate = this.allocate = function allocate() {
-           for (var i = 0; i < 100; i++)
+         let allocate = this.allocate = function allocate() {
+           for (let i = 0; i < 100; i++) {
              objects.push({});
+           }
            setTimeout(allocate, 10);
-         }
+         };
 
          allocate();
         </script>

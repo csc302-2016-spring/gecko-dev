@@ -2,6 +2,7 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test that toggling diffing unselects all snapshots.
+"use strict";
 
 const { snapshotState } = require("devtools/client/memory/constants");
 const { toggleDiffing } = require("devtools/client/memory/actions/diffing");
@@ -11,7 +12,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();

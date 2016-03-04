@@ -2,6 +2,7 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test that we can compute and fetch the dominator tree for a snapshot.
+"use strict";
 
 let {
   snapshotState: states,
@@ -16,7 +17,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -30,7 +31,8 @@ add_task(function *() {
      "until we switch to the dominators view.");
 
   // Change to the dominator tree view.
-  dispatch(computeAndFetchDominatorTree(heapWorker, getState().snapshots[0].id));
+  dispatch(computeAndFetchDominatorTree(heapWorker,
+                                        getState().snapshots[0].id));
   ok(getState().snapshots[0].dominatorTree,
      "Should now have a dominator tree model for the selected snapshot");
 
