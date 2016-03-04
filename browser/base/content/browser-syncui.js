@@ -39,10 +39,6 @@ var gSyncUI = {
 
     // Proceed to set up the UI if Sync has already started up.
     // Otherwise we'll do it when Sync is firing up.
-    // if (this.weaveService.ready) {
-    //   this.initUI();
-    //   return;
-    // }
 
     this.weaveService.whenLoaded().then(() => this.initUI())
 
