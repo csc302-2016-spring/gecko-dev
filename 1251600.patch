@@ -1,0 +1,40 @@
+diff --git a/testing/firefox-ui/tests/firefox_ui_tests/puppeteer/test_page_info_window.py b/testing/firefox-ui/tests/firefox_ui_tests/puppeteer/test_page_info_window.py
+--- a/testing/firefox-ui/tests/firefox_ui_tests/puppeteer/test_page_info_window.py
++++ b/testing/firefox-ui/tests/firefox_ui_tests/puppeteer/test_page_info_window.py
+@@ -64,18 +64,17 @@ class TestPageInfoWindow(FirefoxTestCase
+             self.browser.menubar.select_by_id('tools-menu', 'menu_pageInfo')
+ 
+         open_strategies = ('menu',
+                            'shortcut',
+                            opener,
+                            )
+ 
+         for trigger in open_strategies:
+-            if trigger == 'shortcut' and \
+-                    self.marionette.session_capabilities['platform'] == 'WINDOWS_NT':
++            if trigger == 'shortcut' and self.platform == 'windows_nt':
+                 # The shortcut for page info window does not exist on windows.
+                 self.assertRaises(ValueError, self.browser.open_page_info_window,
+                                   trigger=trigger)
+                 continue
+ 
+             page_info = self.browser.open_page_info_window(trigger=trigger)
+             self.assertEquals(page_info, self.windows.current)
+             page_info.close()
+@@ -87,14 +86,14 @@ class TestPageInfoWindow(FirefoxTestCase
+ 
+         # Close a tab by each trigger method
+         close_strategies = ('menu',
+                             'shortcut',
+                             closer,
+                             )
+         for trigger in close_strategies:
+             # menu only works on OS X
+-            if trigger == 'menu' and self.platform != 'Darwin':
++            if trigger == 'menu' and self.platform != 'darwin':
+                 continue
+ 
+             page_info = self.browser.open_page_info_window()
+             page_info.close(trigger=trigger)
+             self.assertTrue(page_info.closed)
+
