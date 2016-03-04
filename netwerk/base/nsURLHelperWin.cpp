@@ -84,6 +84,7 @@ net_GetFileFromURLSpec(const nsACString &aURL, nsIFile **result)
         if (path.Length() > 2 && path.CharAt(2) == '|')
             path.SetCharAt(':', 2);
         path.ReplaceChar('/', '\\');
+        path.ReplaceSubstring("%2F", "\\");
     }    
     if (!fileBaseName.IsEmpty())
         NS_EscapeURL(fileBaseName, esc_FileBaseName|esc_AlwaysCopy, path);
