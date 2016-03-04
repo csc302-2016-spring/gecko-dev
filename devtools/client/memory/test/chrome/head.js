@@ -1,6 +1,13 @@
 /* Any copyright is dedicated to the Public Domain.
    http://creativecommons.org/publicdomain/zero/1.0/ */
 "use strict";
+/* exported BrowserLoader, immutableUpdate, breakdowns, L10N, Heap,
+   CensusTreeItem, DominatorTreeComponent, DominatorTreeItem, ShortestPaths,
+   Toolbar, SimpleTest, renderComponent, setState, setProps, Cc, Ci, Cr,
+   diffingState, TEST_CENSUS_TREE_PROPS, TEST_CENSUS_TREE_ITEM_PROPS,
+   TEST_DOMINATOR_TREE_PROPS, TEST_SHORTEST_PATHS_PROPS, TEST_HEAP_PROPS,
+   TEST_TOOLBAR_PROPS */
+/* global BrowserLoader, SimpleTest, requestAnimationFrame */
 
 var { classes: Cc, interfaces: Ci, utils: Cu, results: Cr } = Components;
 
@@ -28,6 +35,7 @@ var {
 const {
   getBreakdownDisplayData,
   getDominatorTreeBreakdownDisplayData,
+  L10N,
 } = require("devtools/client/memory/utils");
 
 var models = require("devtools/client/memory/models");
@@ -35,14 +43,43 @@ var models = require("devtools/client/memory/models");
 var React = require("devtools/client/shared/vendor/react");
 var ReactDOM = require("devtools/client/shared/vendor/react-dom");
 var Heap = React.createFactory(require("devtools/client/memory/components/heap"));
+var CensusTreeItem = React.createFactory(require("devtools/client/memory/components/census-tree-item"));
 var DominatorTreeComponent = React.createFactory(require("devtools/client/memory/components/dominator-tree"));
 var DominatorTreeItem = React.createFactory(require("devtools/client/memory/components/dominator-tree-item"));
+var ShortestPaths = React.createFactory(require("devtools/client/memory/components/shortest-paths"));
 var Toolbar = React.createFactory(require("devtools/client/memory/components/toolbar"));
 
 // All tests are asynchronous.
 SimpleTest.waitForExplicitFinish();
 
 var noop = () => {};
+
+var TEST_CENSUS_TREE_ITEM_PROPS = Object.freeze({
+  item: Object.freeze({
+    bytes: 10,
+    count: 1,
+    totalBytes: 10,
+    totalCount: 1,
+    name: "foo",
+    children: [
+      Object.freeze({
+        bytes: 10,
+        count: 1,
+        totalBytes: 10,
+        totalCount: 1,
+        name: "bar",
+      })
+    ]
+  }),
+  depth: 0,
+  arrow: ">",
+  focused: true,
+  getPercentBytes: () => 50,
+  getPercentCount: () => 50,
+  showSign: false,
+  onViewSourceInDebugger: noop,
+  inverted: false,
+});
 
 // Counter for mock DominatorTreeNode ids.
 var TEST_NODE_ID_COUNTER = 0;
@@ -63,7 +100,8 @@ function makeTestDominatorTreeNode(opts, children) {
     nodeId,
     label: ["other", "SomeType"],
     shallowSize: 1,
-    retainedSize: (children || []).reduce((size, c) => size + c.retainedSize, 1),
+    retainedSize: (children || []).reduce((size, c) => size + c.retainedSize,
+                   1),
     parentId: undefined,
     children,
     moreChildrenAvailable: true,
@@ -103,6 +141,21 @@ var TEST_DOMINATOR_TREE_PROPS = Object.freeze({
   onViewSourceInDebugger: noop,
   onExpand: noop,
   onCollapse: noop,
+});
+
+var TEST_SHORTEST_PATHS_PROPS = Object.freeze({
+  graph: Object.freeze({
+    nodes: [
+      { id: 1, label: ["other", "SomeType"] },
+      { id: 2, label: ["other", "SomeType"] },
+      { id: 3, label: ["other", "SomeType"] },
+    ],
+    edges: [
+      { from: 1, to: 2, name: "1->2" },
+      { from: 1, to: 3, name: "1->3" },
+      { from: 2, to: 3, name: "2->3" },
+    ],
+  }),
 });
 
 var TEST_HEAP_PROPS = Object.freeze({
@@ -146,6 +199,8 @@ var TEST_HEAP_PROPS = Object.freeze({
     creationTime: 0,
     state: snapshotState.SAVED_CENSUS,
   }),
+  sizes: Object.freeze({ shortestPathsSize: .5 }),
+  onShortestPathsResize: noop,
 });
 
 var TEST_TOOLBAR_PROPS = Object.freeze({

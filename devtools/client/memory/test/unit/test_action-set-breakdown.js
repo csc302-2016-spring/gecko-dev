@@ -3,9 +3,10 @@
 
 /**
  * Tests the action creator `setBreakdown()` for breakdown changing.
- * Does not test refreshing the census information, check `setBreakdownAndRefresh` action
- * for that.
+ * Does not test refreshing the census information, check
+ * `setBreakdownAndRefresh` action for that.
  */
+"use strict";
 
 let { breakdowns, snapshotState: states } = require("devtools/client/memory/constants");
 let { setBreakdown } = require("devtools/client/memory/actions/breakdown");
@@ -15,7 +16,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -23,9 +24,11 @@ add_task(function *() {
   let { getState, dispatch } = store;
 
   // Test default breakdown with no snapshots
-  equal(getState().breakdown.by, "coarseType", "default coarseType breakdown selected at start.");
-  dispatch(setBreakdown(breakdowns.objectClass.breakdown));
-  equal(getState().breakdown.by, "objectClass", "breakdown changed with no snapshots");
+  equal(getState().breakdown.by, "coarseType",
+        "default coarseType breakdown selected at start.");
+  dispatch(setBreakdown(breakdowns.allocationStack.breakdown));
+  equal(getState().breakdown.by, "allocationStack",
+        "breakdown changed with no snapshots");
 
   // Test invalid breakdowns
   try {
@@ -34,12 +37,12 @@ add_task(function *() {
   } catch (e) {
     ok(true, "Throws when passing in an invalid breakdown object");
   }
-  equal(getState().breakdown.by, "objectClass",
+  equal(getState().breakdown.by, "allocationStack",
     "current breakdown unchanged when passing invalid breakdown");
 
   // Test new snapshots
   dispatch(takeSnapshotAndCensus(front, heapWorker));
   yield waitUntilSnapshotState(store, [states.SAVED_CENSUS]);
-  ok(isBreakdownType(getState().snapshots[0].census.report, "objectClass"),
+  ok(isBreakdownType(getState().snapshots[0].census.report, "allocationStack"),
     "New snapshots use the current, non-default breakdown");
 });

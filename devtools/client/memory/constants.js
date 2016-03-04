@@ -3,6 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 "use strict";
+/* exported dominatorTreeBreakdowns, breakdowns */
 
 // Options passed to MemoryFront's startRecordingAllocations never change.
 exports.ALLOCATION_RECORDING_OPTIONS = {
@@ -14,7 +15,7 @@ exports.ALLOCATION_RECORDING_OPTIONS = {
 // in `devtools/client/themes/memory.css`
 exports.TREE_ROW_HEIGHT = 14;
 
-/*** Actions ******************************************************************/
+/* Actions ******************************************************************/
 
 const actions = exports.actions = {};
 
@@ -32,8 +33,10 @@ actions.TAKE_CENSUS_START = "take-census-start";
 actions.TAKE_CENSUS_END = "take-census-end";
 
 // When requesting that the server start/stop recording allocation stacks.
-actions.TOGGLE_RECORD_ALLOCATION_STACKS_START = "toggle-record-allocation-stacks-start";
-actions.TOGGLE_RECORD_ALLOCATION_STACKS_END = "toggle-record-allocation-stacks-end";
+actions.TOGGLE_RECORD_ALLOCATION_STACKS_START =
+    "toggle-record-allocation-stacks-start";
+actions.TOGGLE_RECORD_ALLOCATION_STACKS_END =
+    "toggle-record-allocation-stacks-end";
 
 // When a heap snapshot is being saved to a user-specified
 // location on disk.
@@ -101,7 +104,9 @@ actions.FETCH_IMMEDIATELY_DOMINATED_END = "fetch-immediately-dominated-end";
 actions.EXPAND_DOMINATOR_TREE_NODE = "expand-dominator-tree-node";
 actions.COLLAPSE_DOMINATOR_TREE_NODE = "collapse-dominator-tree-node";
 
-/*** Breakdowns ***************************************************************/
+actions.RESIZE_SHORTEST_PATHS = "resize-shortest-paths";
+
+/* Breakdowns ***************************************************************/
 
 const COUNT = { by: "count", count: true, bytes: true };
 const INTERNAL_TYPE = { by: "internalType", then: COUNT };
@@ -110,7 +115,7 @@ const OBJECT_CLASS = { by: "objectClass", then: COUNT, other: COUNT };
 
 const breakdowns = exports.breakdowns = {
   coarseType: {
-    displayName: "Coarse Type",
+    displayName: "Type",
     get tooltip() {
       // Importing down here is necessary because of the circular dependency
       // this introduces with `./utils.js`.
@@ -131,30 +136,12 @@ const breakdowns = exports.breakdowns = {
   },
 
   allocationStack: {
-    displayName: "Allocation Stack",
+    displayName: "Call Stack",
     get tooltip() {
       const { L10N } = require("./utils");
       return L10N.getStr("breakdowns.allocationStack.tooltip");
     },
     breakdown: ALLOCATION_STACK,
-  },
-
-  objectClass: {
-    displayName: "Object Class",
-    get tooltip() {
-      const { L10N } = require("./utils");
-      return L10N.getStr("breakdowns.objectClass.tooltip");
-    },
-    breakdown: OBJECT_CLASS,
-  },
-
-  internalType: {
-    displayName: "Internal Type",
-    get tooltip() {
-      const { L10N } = require("./utils");
-      return L10N.getStr("breakdowns.internalType.tooltip");
-    },
-    breakdown: INTERNAL_TYPE,
   },
 };
 
@@ -175,7 +162,7 @@ const DOMINATOR_TREE_LABEL_COARSE_TYPE = {
 
 const dominatorTreeBreakdowns = exports.dominatorTreeBreakdowns = {
   coarseType: {
-    displayName: "Coarse Type",
+    displayName: "Type",
     get tooltip() {
       const { L10N } = require("./utils");
       return L10N.getStr("dominatorTreeBreakdowns.coarseType.tooltip");
@@ -184,7 +171,7 @@ const dominatorTreeBreakdowns = exports.dominatorTreeBreakdowns = {
   },
 
   allocationStack: {
-    displayName: "Allocation Stack",
+    displayName: "Call Stack",
     get tooltip() {
       const { L10N } = require("./utils");
       return L10N.getStr("dominatorTreeBreakdowns.allocationStack.tooltip");
@@ -195,18 +182,9 @@ const dominatorTreeBreakdowns = exports.dominatorTreeBreakdowns = {
       noStack: DOMINATOR_TREE_LABEL_COARSE_TYPE,
     },
   },
-
-  internalType: {
-    displayName: "Internal Type",
-    get tooltip() {
-      const { L10N } = require("./utils");
-      return L10N.getStr("dominatorTreeBreakdowns.internalType.tooltip");
-    },
-    breakdown: INTERNAL_TYPE,
-  },
 };
 
-/*** View States **************************************************************/
+/* View States **************************************************************/
 
 /**
  * The various main views that the tool can be in.
@@ -216,7 +194,7 @@ viewState.CENSUS = "view-state-census";
 viewState.DIFFING = "view-state-diffing";
 viewState.DOMINATOR_TREE = "view-state-dominator-tree";
 
-/*** Snapshot States **********************************************************/
+/* Snapshot States **********************************************************/
 
 const snapshotState = exports.snapshotState = Object.create(null);
 
@@ -240,7 +218,7 @@ snapshotState.READ = "snapshot-state-read";
 snapshotState.SAVING_CENSUS = "snapshot-state-saving-census";
 snapshotState.SAVED_CENSUS = "snapshot-state-saved-census";
 
-/*** Diffing States ***********************************************************/
+/* Diffing States ***********************************************************/
 
 /*
  * Various states the diffing model can be in.
@@ -264,7 +242,7 @@ diffingState.TOOK_DIFF = "diffing-state-took-diff";
 // An error occurred while computing the diff.
 diffingState.ERROR = "diffing-state-error";
 
-/*** Dominator Tree States ****************************************************/
+/* Dominator Tree States ****************************************************/
 
 /*
  * Various states the dominator tree model can be in.
@@ -278,5 +256,6 @@ dominatorTreeState.COMPUTING = "dominator-tree-state-computing";
 dominatorTreeState.COMPUTED = "dominator-tree-state-computed";
 dominatorTreeState.FETCHING = "dominator-tree-state-fetching";
 dominatorTreeState.LOADED = "dominator-tree-state-loaded";
-dominatorTreeState.INCREMENTAL_FETCHING = "dominator-tree-state-incremental-fetching";
+dominatorTreeState.INCREMENTAL_FETCHING =
+    "dominator-tree-state-incremental-fetching";
 dominatorTreeState.ERROR = "dominator-tree-state-error";

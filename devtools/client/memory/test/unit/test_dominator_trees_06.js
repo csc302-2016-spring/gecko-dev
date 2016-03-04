@@ -2,15 +2,14 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test that we can incrementally fetch a subtree of a dominator tree.
+"use strict";
 
 const {
-  snapshotState: states,
   dominatorTreeState,
   viewState,
 } = require("devtools/client/memory/constants");
 const {
   takeSnapshotAndCensus,
-  selectSnapshotAndRefresh,
   fetchImmediatelyDominated,
 } = require("devtools/client/memory/actions/snapshot");
 const DominatorTreeLazyChildren
@@ -22,7 +21,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -68,7 +67,8 @@ add_task(function *() {
   ok(oldNode !== oldRoot, "But the node should not be the root");
 
   const lazyChildren = new DominatorTreeLazyChildren(oldNode.nodeId, 0);
-  dispatch(fetchImmediatelyDominated(heapWorker, getState().snapshots[0].id, lazyChildren));
+  dispatch(fetchImmediatelyDominated(heapWorker, getState().snapshots[0].id,
+                                     lazyChildren));
 
   equal(getState().snapshots[0].dominatorTree.state,
         dominatorTreeState.INCREMENTAL_FETCHING,
@@ -119,7 +119,8 @@ add_task(function *() {
 
   const newNode = findNewNode(newRoot);
   ok(newNode, "Should find the node in the new tree again");
-  ok(newNode !== oldNode, "We did not mutate the old node in place, instead created a new node");
+  ok(newNode !== oldNode,
+     "We did not mutate the old node in place, instead created a new node");
   ok(newNode.children, "And the new node should have the children attached");
 
   heapWorker.destroy();

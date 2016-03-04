@@ -2,6 +2,7 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test setting the filter string.
+"use strict";
 
 let { setFilterString } = require("devtools/client/memory/actions/filter");
 
@@ -9,7 +10,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let store = Store();
   const { getState, dispatch } = store;
 

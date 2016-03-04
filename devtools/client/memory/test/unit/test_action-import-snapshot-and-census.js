@@ -5,6 +5,7 @@
  * Tests the task creator `importSnapshotAndCensus()` for the whole flow of
  * importing a snapshot, and its sub-actions.
  */
+"use strict";
 
 let { actions, snapshotState: states } = require("devtools/client/memory/constants");
 let { breakdownEquals } = require("devtools/client/memory/utils");
@@ -15,7 +16,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -35,7 +36,8 @@ add_task(function *() {
 
   // Now import our freshly exported snapshot
   let i = 0;
-  let expected = ["IMPORTING", "READING", "READ", "SAVING_CENSUS", "SAVED_CENSUS"];
+  let expected = ["IMPORTING", "READING", "READ", "SAVING_CENSUS",
+                  "SAVED_CENSUS"];
   let expectStates = () => {
     let snapshot = getState().snapshots[1];
     if (!snapshot) {
@@ -53,8 +55,10 @@ add_task(function *() {
 
   yield waitUntilState(store, () => i === 5);
   unsubscribe();
-  equal(i, 5, "importSnapshotAndCensus() produces the correct sequence of states in a snapshot");
-  equal(getState().snapshots[1].state, states.SAVED_CENSUS, "imported snapshot is in SAVED_CENSUS state");
+  equal(i, 5, "importSnapshotAndCensus() produces the correct sequence " +
+              "of states in a snapshot");
+  equal(getState().snapshots[1].state, states.SAVED_CENSUS,
+        "imported snapshot is in SAVED_CENSUS state");
   ok(getState().snapshots[1].selected, "imported snapshot is selected");
 
   // Check snapshot data
@@ -64,14 +68,17 @@ add_task(function *() {
   ok(breakdownEquals(snapshot1.breakdown, snapshot2.breakdown),
     "imported snapshot has correct breakdown");
 
-  // Clone the census data so we can destructively remove the ID/parents to compare
-  // equal census data
-  let census1 = stripUnique(JSON.parse(JSON.stringify(snapshot1.census.report)));
-  let census2 = stripUnique(JSON.parse(JSON.stringify(snapshot2.census.report)));
+  // Clone the census data so we can destructively remove the ID/parents to
+  // compare equal census data
+  let census1 =
+      stripUnique(JSON.parse(JSON.stringify(snapshot1.census.report)));
+  let census2 =
+      stripUnique(JSON.parse(JSON.stringify(snapshot2.census.report)));
 
-  equal(JSON.stringify(census1), JSON.stringify(census2), "Imported snapshot has correct census");
+  equal(JSON.stringify(census1), JSON.stringify(census2),
+        "Imported snapshot has correct census");
 
-  function stripUnique (obj) {
+  function stripUnique(obj) {
     let children = obj.children || [];
     for (let child of children) {
       delete child.id;

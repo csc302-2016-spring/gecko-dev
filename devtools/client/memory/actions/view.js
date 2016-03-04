@@ -11,7 +11,7 @@ const refresh = require("./refresh");
  *
  * @param {viewState} view
  */
-const changeView = exports.changeView = function (view) {
+const changeView = exports.changeView = function(view) {
   return {
     type: actions.CHANGE_VIEW,
     view
@@ -24,7 +24,7 @@ const changeView = exports.changeView = function (view) {
  *
  * @param {viewState} view
  */
-exports.changeViewAndRefresh = function (view, heapWorker) {
+exports.changeViewAndRefresh = function(view, heapWorker) {
   return function* (dispatch, getState) {
     dispatch(changeView(view));
     yield dispatch(refresh.refresh(heapWorker));

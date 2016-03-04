@@ -1,6 +1,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported Toolbar */
 
 const { assert } = require("devtools/shared/DevToolsUtils");
 const { DOM: dom, createClass, PropTypes } = require("devtools/client/shared/vendor/react");
@@ -111,7 +113,7 @@ const Toolbar = module.exports = createClass({
           placeholder: L10N.getStr("filter.placeholder"),
           title: L10N.getStr("filter.tooltip"),
           onChange: event => setFilterString(event.target.value),
-          value: !!filterString ? filterString : undefined,
+          value: filterString ? filterString : undefined,
         })
       );
     } else {
@@ -133,12 +135,13 @@ const Toolbar = module.exports = createClass({
               id: "select-dominator-tree-breakdown",
               onChange: e => onDominatorTreeBreakdownChange(e.target.value),
             },
-            dominatorTreeBreakdowns.map(({ name, tooltip, displayName }) => dom.option(
-              {
-                key: name,
-                value: name,
-                title: tooltip,
-              },
+            dominatorTreeBreakdowns.map(({ name, tooltip, displayName }) =>
+              dom.option(
+                {
+                  key: name,
+                  value: name,
+                  title: tooltip,
+                },
               displayName
             ))
           )
@@ -198,7 +201,8 @@ const Toolbar = module.exports = createClass({
           dom.button(
             {
               id: "diff-snapshots",
-              className: "devtools-button devtools-monospace" + (!!diffing ? " checked" : ""),
+              className: "devtools-button devtools-monospace" +
+                          (diffing ? " checked" : ""),
               disabled: snapshots.length < 2,
               onClick: onToggleDiffing,
               title: L10N.getStr("diff-snapshots.tooltip"),
@@ -208,7 +212,8 @@ const Toolbar = module.exports = createClass({
           dom.button(
             {
               id: "import-snapshot",
-              className: "devtools-toolbarbutton import-snapshot devtools-button",
+              className: "devtools-toolbarbutton import-snapshot " +
+                         "devtools-button",
               onClick: onImportClick,
               title: L10N.getStr("import-snapshot"),
               "data-text-only": true,

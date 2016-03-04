@@ -3,6 +3,7 @@
 
 // Test that changing filter state in the middle of taking a snapshot results in
 // the properly fitered census.
+"use strict";
 
 let { snapshotState: states } = require("devtools/client/memory/constants");
 let { setFilterString, setFilterStringAndRefresh } = require("devtools/client/memory/actions/filter");
@@ -12,7 +13,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();

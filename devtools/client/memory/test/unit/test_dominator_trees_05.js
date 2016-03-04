@@ -3,6 +3,7 @@
 
 // Test that changing the currently selected snapshot to a snapshot that does
 // not have a dominator tree will automatically compute and fetch one for it.
+"use strict";
 
 let {
   snapshotState: states,
@@ -20,7 +21,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();

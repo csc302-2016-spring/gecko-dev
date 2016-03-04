@@ -4,6 +4,7 @@
 // Sanity test that we can show allocation stack breakdowns in the tree.
 
 "use strict";
+/* global waitUntilState */
 
 const {
   dominatorTreeState,
@@ -16,7 +17,6 @@ const TEST_URL = "http://example.com/browser/devtools/client/memory/test/browser
 
 this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
   const heapWorker = panel.panelWin.gHeapAnalysesClient;
-  const front = panel.panelWin.gFront;
   const store = panel.panelWin.gStore;
   const { getState, dispatch } = store;
   const doc = panel.panelWin.document;
@@ -28,20 +28,28 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
 
   const takeSnapshotButton = doc.getElementById("take-snapshot");
   EventUtils.synthesizeMouseAtCenter(takeSnapshotButton, {}, panel.panelWin);
-  yield waitUntilSnapshotState(store, [snapshotState.SAVED_CENSUS]);
+
+  yield waitUntilState(store, state =>
+    state.snapshots.length === 1 &&
+    state.snapshots[0].state === snapshotState.SAVED_CENSUS);
 
   let filterInput = doc.getElementById("filter");
   EventUtils.synthesizeMouseAtCenter(filterInput, {}, panel.panelWin);
   EventUtils.sendString("js::Shape", panel.panelWin);
 
-  yield waitUntilSnapshotState(store, [snapshotState.SAVING_CENSUS]);
+  yield waitUntilState(store, state =>
+    state.snapshots.length === 1 &&
+    state.snapshots[0].state === snapshotState.SAVING_CENSUS);
   ok(true, "adding a filter string should trigger census recompute");
 
-  yield waitUntilSnapshotState(store, [snapshotState.SAVED_CENSUS]);
+  yield waitUntilState(store, state =>
+    state.snapshots.length === 1 &&
+    state.snapshots[0].state === snapshotState.SAVED_CENSUS);
 
   let nameElem = doc.querySelector(".heap-tree-item-field.heap-tree-item-name");
   ok(nameElem, "Should get a tree item row with a name");
-  is(nameElem.textContent.trim(), "js::Shape", "the tree item should be the one we filtered for");
+  is(nameElem.textContent.trim(),
+     "js::Shape", "the tree item should be the one we filtered for");
   is(filterInput.value, "js::Shape",
     "and filter input contains the user value");
 
@@ -57,7 +65,9 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
   dispatch(changeViewAndRefresh(viewState.CENSUS, heapWorker));
   ok(true, "change view back to census");
 
-  yield waitUntilSnapshotState(store, [snapshotState.SAVED_CENSUS]);
+  yield waitUntilState(store, state =>
+    state.snapshots.length === 1 &&
+    state.snapshots[0].state === snapshotState.SAVED_CENSUS);
 
   nameElem = doc.querySelector(".heap-tree-item-field.heap-tree-item-name");
   filterInput = doc.getElementById("filter");

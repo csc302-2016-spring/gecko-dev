@@ -2,6 +2,7 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test that we recompute census diffs at the appropriate times.
+"use strict";
 
 const {
   diffingState,
@@ -31,7 +32,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -71,7 +72,7 @@ add_task(function *() {
       name: "changing breakdowns",
       func: () =>
         dispatch(setBreakdownAndRefresh(heapWorker,
-                                        breakdowns.objectClass.breakdown))
+                                        breakdowns.allocationStack.breakdown))
     }
   ];
 

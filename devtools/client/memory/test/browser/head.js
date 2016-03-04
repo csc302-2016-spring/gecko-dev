@@ -2,6 +2,10 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 "use strict";
+/* exported makeMemoryTest, dumpn, waitUntilDominatorTreeState, takeSnapshot
+   clearSnapshots, setBreakdown, getDisplayedSnapshotStatus
+   getSelectedSnapshotIndex, waitUntilSnapshotSelected */
+/* global waitUntilState, addTab, removeTab */
 
 // Load the shared test helpers into this compartment.
 Services.scriptloader.loadSubScript(
@@ -72,15 +76,8 @@ function makeMemoryTest(url, generator) {
   });
 }
 
-function waitUntilSnapshotState (store, expected) {
-  let predicate = () => {
-    let snapshots = store.getState().snapshots;
-    info(snapshots.map(x => x.state));
-    return snapshots.length === expected.length &&
-           expected.every((state, i) => state === "*" || snapshots[i].state === state);
-  };
-  info(`Waiting for snapshots to be of state: ${expected}`);
-  return waitUntilState(store, predicate);
+function dumpn(msg) {
+  dump(`MEMORY-TEST: ${msg}\n`);
 }
 
 /**
@@ -107,15 +104,16 @@ function waitUntilDominatorTreeState(store, expected) {
   return waitUntilState(store, predicate);
 }
 
-function takeSnapshot (window) {
+function takeSnapshot(window) {
   let { gStore, document } = window;
   let snapshotCount = gStore.getState().snapshots.length;
   info(`Taking snapshot...`);
   document.querySelector(".devtools-toolbar .take-snapshot").click();
-  return waitUntilState(gStore, () => gStore.getState().snapshots.length === snapshotCount + 1);
+  return waitUntilState(gStore, () => gStore.getState().snapshots.length ===
+                                      snapshotCount + 1);
 }
 
-function clearSnapshots (window) {
+function clearSnapshots(window) {
   let { gStore, document } = window;
   document.querySelector(".devtools-toolbar .clear-snapshots").click();
   return waitUntilState(gStore, () => gStore.getState().snapshots.every(
@@ -127,19 +125,21 @@ function clearSnapshots (window) {
  * Sets breakdown and waits for currently selected breakdown to use it
  * and be completed the census.
  */
-function setBreakdown (window, type) {
+function setBreakdown(window, type) {
   info(`Setting breakdown to ${type}...`);
   let { gStore, gHeapAnalysesClient } = window;
   // XXX: Should handle this via clicking the DOM, but React doesn't
   // fire the onChange event, so just change it in the store.
   // window.document.querySelector(`.select-breakdown`).value = type;
   gStore.dispatch(require("devtools/client/memory/actions/breakdown")
-                         .setBreakdownAndRefresh(gHeapAnalysesClient, breakdownNameToSpec(type)));
+                         .setBreakdownAndRefresh(gHeapAnalysesClient,
+                          breakdownNameToSpec(type)));
 
   return waitUntilState(window.gStore, () => {
     let selected = window.gStore.getState().snapshots.find(s => s.selected);
     return selected.state === states.SAVED_CENSUS &&
-           breakdownEquals(breakdownNameToSpec(type), selected.census.breakdown);
+           breakdownEquals(breakdownNameToSpec(type),
+                          selected.census.breakdown);
   });
 }
 
@@ -152,4 +152,27 @@ function setBreakdown (window, type) {
 function getDisplayedSnapshotStatus(document) {
   const status = document.querySelector(".snapshot-status");
   return status ? status.textContent.trim() : null;
+}
+
+/**
+ * Get the index of the currently selected snapshot.
+ *
+ * @return {Number}
+ */
+function getSelectedSnapshotIndex(store) {
+  let snapshots = store.getState().snapshots;
+  let selectedSnapshot = snapshots.find(s => s.selected);
+  return snapshots.indexOf(selectedSnapshot);
+}
+
+/**
+ * Returns a promise that will resolve when the snapshot with provided index
+ * becomes selected.
+ *
+ * @return {Promise}
+ */
+function waitUntilSnapshotSelected(store, snapshotIndex) {
+  return waitUntilState(store, state =>
+    state.snapshots[snapshotIndex] &&
+    state.snapshots[snapshotIndex].selected === true);
 }

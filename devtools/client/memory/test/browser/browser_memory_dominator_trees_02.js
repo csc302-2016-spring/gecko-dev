@@ -4,6 +4,7 @@
 // Integration test for mouse interaction in the dominator tree
 
 "use strict";
+/* global waitUntilState */
 
 const {
   dominatorTreeState,

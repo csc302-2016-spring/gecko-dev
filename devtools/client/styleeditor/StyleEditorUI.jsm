@@ -16,7 +16,7 @@ const {NetUtil} = Cu.import("resource://gre/modules/NetUtil.jsm", {});
 const {OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
 const {Task} = Cu.import("resource://gre/modules/Task.jsm", {});
 const EventEmitter = require("devtools/shared/event-emitter");
-const {gDevTools} = require("resource://devtools/client/framework/gDevTools.jsm");
+const {gDevTools} = require("devtools/client/framework/devtools");
 /* import-globals-from StyleEditorUtil.jsm */
 Cu.import("resource://devtools/client/styleeditor/StyleEditorUtil.jsm");
 const {SplitView} = Cu.import("resource://devtools/client/shared/SplitView.jsm", {});
@@ -945,11 +945,11 @@ StyleEditorUI.prototype = {
    * @param  {object} options
    *         Object with width or/and height properties.
    */
-  _launchResponsiveMode: function(options = {}) {
+  _launchResponsiveMode: Task.async(function*(options = {}) {
     let tab = this._target.tab;
     let win = this._target.tab.ownerGlobal;
 
-    ResponsiveUIManager.runIfNeeded(win, tab);
+    yield ResponsiveUIManager.runIfNeeded(win, tab);
     if (options.width && options.height) {
       ResponsiveUIManager.getResponsiveUIForTab(tab).setSize(options.width,
                                                              options.height);
@@ -958,7 +958,7 @@ StyleEditorUI.prototype = {
     } else if (options.height) {
       ResponsiveUIManager.getResponsiveUIForTab(tab).setHeight(options.height);
     }
-  },
+  }),
 
   /**
    * Jump cursor to the editor for a stylesheet and line number for a rule.

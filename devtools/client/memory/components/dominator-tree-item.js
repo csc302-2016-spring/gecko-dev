@@ -1,6 +1,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
+/* exported DominatorTreeItem */
 
 const { assert, isSavedFrame } = require("devtools/shared/DevToolsUtils");
 const { DOM: dom, createClass, createFactory, PropTypes } = require("devtools/client/shared/vendor/react");
@@ -46,7 +48,8 @@ const DominatorTreeItem = module.exports = createClass({
     } = this.props;
 
     const retainedSize = formatNumber(item.retainedSize);
-    const percentRetainedSize = formatPercent(getPercentSize(item.retainedSize));
+    const percentRetainedSize =
+          formatPercent(getPercentSize(item.retainedSize));
 
     const shallowSize = formatNumber(item.shallowSize);
     const percentShallowSize = formatPercent(getPercentSize(item.shallowSize));
@@ -98,7 +101,8 @@ const DominatorTreeItem = module.exports = createClass({
 
     return dom.div(
       {
-        className: `heap-tree-item ${focused ? "focused" : ""} node-${item.nodeId}`
+        className: `heap-tree-item ${focused ? "focused" : ""}
+                    node-${item.nodeId}`
       },
 
       dom.span(

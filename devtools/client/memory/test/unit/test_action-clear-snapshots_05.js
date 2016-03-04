@@ -2,6 +2,7 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test clearSnapshots deletes several snapshots
+"use strict";
 
 let { takeSnapshotAndCensus, clearSnapshots } = require("devtools/client/memory/actions/snapshot");
 let { snapshotState: states, actions } = require("devtools/client/memory/constants");
@@ -10,7 +11,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -21,7 +22,8 @@ add_task(function *() {
   dispatch(takeSnapshotAndCensus(front, heapWorker));
   dispatch(takeSnapshotAndCensus(front, heapWorker));
   ok(true, "snapshots created in SAVED_CENSUS state");
-  yield waitUntilSnapshotState(store, [states.SAVED_CENSUS, states.SAVED_CENSUS]);
+  yield waitUntilSnapshotState(store,
+                               [states.SAVED_CENSUS, states.SAVED_CENSUS]);
 
   let errorHeapWorker = {
     deleteHeapSnapshot: function() {

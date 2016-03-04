@@ -7,11 +7,11 @@ const { actions, viewState } = require("../constants");
 
 const handlers = Object.create(null);
 
-handlers[actions.CHANGE_VIEW] = function (_, { view }) {
+handlers[actions.CHANGE_VIEW] = function(_, { view }) {
   return view;
 };
 
-module.exports = function (view = viewState.CENSUS, action) {
+module.exports = function(view = viewState.CENSUS, action) {
   const handler = handlers[action.type];
   return handler ? handler(view, action) : view;
 };

@@ -2,14 +2,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* exported setBreakdownAndRefresh */
+/* global uneval */
 
 const { assert } = require("devtools/shared/DevToolsUtils");
-const { breakdownEquals, createSnapshot } = require("../utils");
-const { actions, snapshotState: states } = require("../constants");
+const { actions } = require("../constants");
 const { refresh } = require("./refresh");
 
-const setBreakdownAndRefresh = exports.setBreakdownAndRefresh = function (heapWorker, breakdown) {
-  return function *(dispatch, getState) {
+const setBreakdownAndRefresh =
+exports.setBreakdownAndRefresh = function(heapWorker, breakdown) {
+  return function*(dispatch, getState) {
     // Clears out all stored census data and sets the breakdown.
     dispatch(setBreakdown(breakdown));
     yield dispatch(refresh(heapWorker));
@@ -22,11 +24,12 @@ const setBreakdownAndRefresh = exports.setBreakdownAndRefresh = function (heapWo
  *
  * @param {Breakdown} breakdown
  */
-const setBreakdown = exports.setBreakdown = function (breakdown) {
+const setBreakdown = exports.setBreakdown = function(breakdown) {
   assert(typeof breakdown === "object"
          && breakdown
          && breakdown.by,
-    `Breakdowns must be an object with a \`by\` property, attempted to set: ${uneval(breakdown)}`);
+    `Breakdowns must be an object with a \`by\` property,
+     attempted to set: ${uneval(breakdown)}`);
 
   return {
     type: actions.SET_BREAKDOWN,

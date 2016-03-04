@@ -4,6 +4,7 @@
 // Test diffing.
 
 "use strict";
+/* global waitUntilState */
 
 const { waitForTime } = require("devtools/shared/DevToolsUtils");
 const {
@@ -14,10 +15,8 @@ const {
 const TEST_URL = "http://example.com/browser/devtools/client/memory/test/browser/doc_steady_allocation.html";
 
 this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
-  const heapWorker = panel.panelWin.gHeapAnalysesClient;
-  const front = panel.panelWin.gFront;
   const store = panel.panelWin.gStore;
-  const { getState, dispatch } = store;
+  const { getState } = store;
   const doc = panel.panelWin.document;
 
   ok(!getState().diffing, "Not diffing by default.");
@@ -38,8 +37,10 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
   ok(true, "Clicking the diffing button put us into the diffing state.");
   is(getDisplayedSnapshotStatus(doc), "Select the baseline snapshot");
 
-  yield waitUntilSnapshotState(store, [snapshotState.SAVED_CENSUS,
-                                       snapshotState.SAVED_CENSUS]);
+  yield waitUntilState(store, state =>
+    state.snapshots.length === 2 &&
+    state.snapshots[0].state === snapshotState.SAVED_CENSUS &&
+    state.snapshots[1].state === snapshotState.SAVED_CENSUS);
 
   const listItems = [...doc.querySelectorAll(".snapshot-list-item")];
   is(listItems.length, 2, "Should have two snapshot list items");
@@ -67,5 +68,6 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
                        state => state.diffing.state === diffingState.TOOK_DIFF);
   ok(true, "And that diff is computed successfully");
   is(getDisplayedSnapshotStatus(doc), null, "No status text anymore");
-  ok(doc.querySelector(".heap-tree-item"), "And instead we should be showing the tree");
+  ok(doc.querySelector(".heap-tree-item"),
+     "And instead we should be showing the tree");
 });

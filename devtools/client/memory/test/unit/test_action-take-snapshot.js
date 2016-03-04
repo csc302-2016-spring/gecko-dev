@@ -4,6 +4,7 @@
 /**
  * Tests the async reducer responding to the action `takeSnapshot(front)`
  */
+"use strict";
 
 let actions = require("devtools/client/memory/actions/snapshot");
 let { snapshotState: states } = require("devtools/client/memory/constants");
@@ -12,7 +13,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   yield front.attach();
   let store = Store();
@@ -22,19 +23,20 @@ add_task(function *() {
   let foundPendingState = false;
   let foundDoneState = false;
 
-  function checkState () {
+  function checkState() {
     let { snapshots } = store.getState();
     let lastSnapshot = snapshots[snapshots.length - 1];
 
     if (lastSnapshot.state === states.SAVING) {
       foundPendingState = true;
-      ok(foundPendingState, "Got state change for pending heap snapshot request");
+      ok(foundPendingState,
+         "Got state change for pending heap snapshot request");
       ok(!lastSnapshot.path, "Snapshot does not yet have a path");
       ok(!lastSnapshot.census, "Has no census data when loading");
-    }
-    else if (lastSnapshot.state === states.SAVED) {
+    } else if (lastSnapshot.state === states.SAVED) {
       foundDoneState = true;
-      ok(foundDoneState, "Got state change for completed heap snapshot request");
+      ok(foundDoneState,
+         "Got state change for completed heap snapshot request");
       ok(foundPendingState, "SAVED state occurs after SAVING state");
       ok(lastSnapshot.path, "Snapshot fetched with a path");
       ok(snapshots.every(s => s.selected === (s.id === lastSnapshot.id)),

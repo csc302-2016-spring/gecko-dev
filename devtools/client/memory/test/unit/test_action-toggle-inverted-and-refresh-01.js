@@ -2,8 +2,9 @@
    http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Test that changing inverted state properly refreshes the selected census.
+"use strict";
 
-let { breakdowns, snapshotState: states } = require("devtools/client/memory/constants");
+let { snapshotState: states } = require("devtools/client/memory/constants");
 let { toggleInvertedAndRefresh } = require("devtools/client/memory/actions/inverted");
 let { takeSnapshotAndCensus, selectSnapshotAndRefresh } = require("devtools/client/memory/actions/snapshot");
 
@@ -11,7 +12,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();

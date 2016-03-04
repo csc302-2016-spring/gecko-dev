@@ -9,7 +9,7 @@ const { snapshotIsDiffable } = require("../utils");
 
 const handlers = Object.create(null);
 
-handlers[actions.CHANGE_VIEW] = function (diffing, { view }) {
+handlers[actions.CHANGE_VIEW] = function(diffing, { view }) {
   if (view === viewState.DIFFING) {
     assert(!diffing, "Should not switch to diffing view when already diffing");
     return Object.freeze({
@@ -23,7 +23,8 @@ handlers[actions.CHANGE_VIEW] = function (diffing, { view }) {
   return null;
 };
 
-handlers[actions.SELECT_SNAPSHOT_FOR_DIFFING] = function (diffing, { snapshot }) {
+handlers[actions.SELECT_SNAPSHOT_FOR_DIFFING] = function(diffing,
+                                                         { snapshot }) {
   assert(diffing,
          "Should never select a snapshot for diffing when we aren't diffing " +
          "anything");
@@ -52,7 +53,7 @@ handlers[actions.SELECT_SNAPSHOT_FOR_DIFFING] = function (diffing, { snapshot })
   });
 };
 
-handlers[actions.TAKE_CENSUS_DIFF_START] = function (diffing, action) {
+handlers[actions.TAKE_CENSUS_DIFF_START] = function(diffing, action) {
   assert(diffing, "Should be diffing when starting a census diff");
   assert(action.first.id === diffing.firstSnapshotId,
          "First snapshot's id should match");
@@ -70,7 +71,7 @@ handlers[actions.TAKE_CENSUS_DIFF_START] = function (diffing, action) {
   });
 };
 
-handlers[actions.TAKE_CENSUS_DIFF_END] = function (diffing, action) {
+handlers[actions.TAKE_CENSUS_DIFF_END] = function(diffing, action) {
   assert(diffing, "Should be diffing when ending a census diff");
   assert(action.first.id === diffing.firstSnapshotId,
          "First snapshot's id should match");
@@ -81,6 +82,7 @@ handlers[actions.TAKE_CENSUS_DIFF_END] = function (diffing, action) {
     state: diffingState.TOOK_DIFF,
     census: {
       report: action.report,
+      parentMap: action.parentMap,
       expanded: new Set(),
       inverted: action.inverted,
       filter: action.filter,
@@ -89,14 +91,14 @@ handlers[actions.TAKE_CENSUS_DIFF_END] = function (diffing, action) {
   });
 };
 
-handlers[actions.DIFFING_ERROR] = function (diffing, action) {
+handlers[actions.DIFFING_ERROR] = function(diffing, action) {
   return {
     state: diffingState.ERROR,
     error: action.error
   };
 };
 
-handlers[actions.EXPAND_DIFFING_CENSUS_NODE] = function (diffing, { node }) {
+handlers[actions.EXPAND_DIFFING_CENSUS_NODE] = function(diffing, { node }) {
   assert(diffing, "Should be diffing if expanding diffing's census nodes");
   assert(diffing.state === diffingState.TOOK_DIFF,
          "Should have taken the census diff if expanding nodes");
@@ -113,7 +115,7 @@ handlers[actions.EXPAND_DIFFING_CENSUS_NODE] = function (diffing, { node }) {
   return immutableUpdate(diffing, { census });
 };
 
-handlers[actions.COLLAPSE_DIFFING_CENSUS_NODE] = function (diffing, { node }) {
+handlers[actions.COLLAPSE_DIFFING_CENSUS_NODE] = function(diffing, { node }) {
   assert(diffing, "Should be diffing if expanding diffing's census nodes");
   assert(diffing.state === diffingState.TOOK_DIFF,
          "Should have taken the census diff if expanding nodes");
@@ -129,14 +131,14 @@ handlers[actions.COLLAPSE_DIFFING_CENSUS_NODE] = function (diffing, { node }) {
   return immutableUpdate(diffing, { census });
 };
 
-handlers[actions.FOCUS_DIFFING_CENSUS_NODE] = function (diffing, { node }) {
+handlers[actions.FOCUS_DIFFING_CENSUS_NODE] = function(diffing, { node }) {
   assert(diffing, "Should be diffing.");
   assert(diffing.census, "Should have a census");
   const census = immutableUpdate(diffing.census, { focused: node });
   return immutableUpdate(diffing, { census });
 };
 
-module.exports = function (diffing = null, action) {
+module.exports = function(diffing = null, action) {
   const handler = handlers[action.type];
   return handler ? handler(diffing, action) : diffing;
 };

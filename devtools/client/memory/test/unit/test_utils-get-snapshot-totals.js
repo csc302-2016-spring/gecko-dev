@@ -5,9 +5,10 @@
  * Tests that we use the correct snapshot aggregate value
  * in `utils.getSnapshotTotals(snapshot)`
  */
+"use strict";
 
-let { breakdowns, snapshotState: states } = require("devtools/client/memory/constants");
-let { getSnapshotTotals, breakdownEquals } = require("devtools/client/memory/utils");
+let { snapshotState: states } = require("devtools/client/memory/constants");
+let { getSnapshotTotals } = require("devtools/client/memory/utils");
 let { toggleInvertedAndRefresh } = require("devtools/client/memory/actions/inverted");
 let { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
 
@@ -15,7 +16,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function *() {
+add_task(function*() {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   yield front.attach();
@@ -38,8 +39,10 @@ add_task(function *() {
   ok(totalCount > 0, "counted up count in the census");
 
   result = getSnapshotTotals(getState().snapshots[0].census);
-  equal(totalBytes, result.bytes, "getSnapshotTotals reuslted in correct bytes");
-  equal(totalCount, result.count, "getSnapshotTotals reuslted in correct count");
+  equal(totalBytes, result.bytes,
+        "getSnapshotTotals reuslted in correct bytes");
+  equal(totalCount, result.count,
+        "getSnapshotTotals reuslted in correct count");
 
   dispatch(toggleInvertedAndRefresh(heapWorker));
   yield waitUntilSnapshotState(store, [states.SAVING_CENSUS]);
@@ -47,16 +50,18 @@ add_task(function *() {
   ok(getState().snapshots[0].census.inverted, "Snapshot is inverted");
 
   result = getSnapshotTotals(getState().snapshots[0].census);
-  equal(totalBytes, result.bytes, "getSnapshotTotals reuslted in correct bytes when inverted");
-  equal(totalCount, result.count, "getSnapshotTotals reuslted in correct count when inverted");
+  equal(totalBytes, result.bytes,
+        "getSnapshotTotals reuslted in correct bytes when inverted");
+  equal(totalCount, result.count,
+        "getSnapshotTotals reuslted in correct count when inverted");
 });
 
-function aggregate (report) {
+function aggregate(report) {
   let totalBytes = report.bytes;
   let totalCount = report.count;
   for (let child of (report.children || [])) {
     let { bytes, count } = aggregate(child);
-    totalBytes += bytes
+    totalBytes += bytes;
     totalCount += count;
   }
   return { bytes: totalBytes, count: totalCount };

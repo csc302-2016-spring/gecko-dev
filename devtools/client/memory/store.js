@@ -1,14 +1,14 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+"use strict";
 
 const { combineReducers } = require("../shared/vendor/redux");
 const createStore = require("../shared/redux/create-store");
 const reducers = require("./reducers");
-const { viewState } = require("./constants");
 const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 
-module.exports = function () {
+module.exports = function() {
   let shouldLog = false;
   let history;
 
@@ -16,7 +16,8 @@ module.exports = function () {
   // we'll later attach to the store
   if (DevToolsUtils.testing) {
     history = [];
-    shouldLog = true;
+    // Uncomment this for TONS of logging in tests.
+    // shouldLog = true;
   }
 
   let store = createStore({

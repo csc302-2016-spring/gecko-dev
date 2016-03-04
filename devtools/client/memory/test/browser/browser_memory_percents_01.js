@@ -5,9 +5,7 @@
 
 "use strict";
 
-const { breakdowns } = require("devtools/client/memory/constants");
 const { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
-const breakdownActions = require("devtools/client/memory/actions/breakdown");
 
 const TEST_URL = "http://example.com/browser/devtools/client/memory/test/browser/doc_steady_allocation.html";
 
@@ -17,7 +15,8 @@ function checkCells(cells) {
   for (let cell of cells.slice(1)) {
     const percent = cell.querySelector(".heap-tree-percent");
     ok(percent, "should have a percent cell");
-    ok(percent.textContent.match(/^\d?\d%$/), "should be of the form nn% or n%");
+    ok(percent.textContent.match(/^\d?\d%$/),
+                                 "should be of the form nn% or n%");
   }
 }
 
@@ -28,21 +27,20 @@ this.test = makeMemoryTest(TEST_URL, function* ({ tab, panel }) {
   const doc = panel.panelWin.document;
 
   yield dispatch(takeSnapshotAndCensus(front, heapWorker));
-  yield dispatch(breakdownActions.setBreakdownAndRefresh(heapWorker,
-                                                         breakdowns.objectClass.breakdown));
-
-  is(getState().breakdown.by, "objectClass",
-     "Should be using object class breakdown");
+  is(getState().breakdown.by, "coarseType",
+     "Should be using coarse type breakdown");
 
   const bytesCells = [...doc.querySelectorAll(".heap-tree-item-bytes")];
   checkCells(bytesCells);
 
-  const totalBytesCells = [...doc.querySelectorAll(".heap-tree-item-total-bytes")];
+  const totalBytesCells =
+      [...doc.querySelectorAll(".heap-tree-item-total-bytes")];
   checkCells(totalBytesCells);
 
   const countCells = [...doc.querySelectorAll(".heap-tree-item-count")];
   checkCells(countCells);
 
-  const totalCountCells = [...doc.querySelectorAll(".heap-tree-item-total-count")];
+  const totalCountCells =
+      [...doc.querySelectorAll(".heap-tree-item-total-count")];
   checkCells(totalCountCells);
 });
