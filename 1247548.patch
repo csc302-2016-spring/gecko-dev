@@ -1,0 +1,31 @@
+# HG changeset patch
+# User Steven Low <steven.low@mail.utoronto.ca>
+
+Bug 1247548 - Changed nsCookieService::EnsureReadComplete and nsCookieService::PurgeCookeis to allocate nsTArray instead of AutoTArray. r=Josh Matthews
+
+
+diff --git a/netwerk/cookie/nsCookieService.cpp b/netwerk/cookie/nsCookieService.cpp
+index 3060ec6..1bbc1db 100644
+--- a/netwerk/cookie/nsCookieService.cpp
++++ b/netwerk/cookie/nsCookieService.cpp
+@@ -2697,7 +2697,7 @@ nsCookieService::EnsureReadComplete()
+ 
+   nsCString baseDomain, name, value, host, path;
+   bool hasResult;
+-  AutoTArray<CookieDomainTuple, kMaxNumberOfCookies> array;
++  nsTArray<CookieDomainTuple> array(kMaxNumberOfCookies);
+   while (1) {
+     rv = stmt->ExecuteStep(&hasResult);
+     if (NS_FAILED(rv)) {
+@@ -4087,8 +4087,8 @@ nsCookieService::PurgeCookies(int64_t aCurrentTimeInUsec)
+     ("PurgeCookies(): beginning purge with %ld cookies and %lld oldest age",
+      mDBState->cookieCount, aCurrentTimeInUsec - mDBState->cookieOldestTime));
+ 
+-  typedef AutoTArray<nsListIter, kMaxNumberOfCookies> PurgeList;
+-  PurgeList purgeList;
++  typedef nsTArray<nsListIter> PurgeList;
++  PurgeList purgeList(kMaxNumberOfCookies);
+ 
+   nsCOMPtr<nsIMutableArray> removedList = do_CreateInstance(NS_ARRAY_CONTRACTID);
+ 
+
