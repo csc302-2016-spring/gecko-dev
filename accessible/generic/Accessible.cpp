@@ -178,13 +178,32 @@ Accessible::Description(nsString& aDescription)
   // 2. It has no DHTML describedby property
   // 3. it doesn't have an accName; or
   // 4. its title attribute already equals to its accName nsAutoString name;
-
+  nsAutoString name;
+  nsString aPlaceholder;
+  nsString aName;
   if (!HasOwnContent() || mContent->IsNodeOfType(nsINode::eTEXT))
     return;
 
   nsTextEquivUtils::
+  GetTextEquivFromIDRefs(this, nsGkAtoms::placeholder, aPlaceholder);
+
+  nsTextEquivUtils::
     GetTextEquivFromIDRefs(this, nsGkAtoms::aria_describedby,
                            aDescription);
+  if(!aDescription.IsEmpty() && !aPlaceholder.IsEmpty()){
+    if (aDescription.Equals(aPlaceholder)){
+      int i = 0;
+    } else{
+      nsTextEquivUtils::
+        GetTextEquivFromIDRefs(this, nsGkAtoms::title, aName);
+      if(aName.Equals(aPlaceholder) || aName.Equals(aDescription)){        
+        aDescription.Assign(aPlaceholder.get(), aPlaceholder.Length());
+      }else{
+        aDescription.Assign(aPlaceholder.get(), aPlaceholder.Length());
+        aDescription.Append(aName.get(), aName.Length());
+      }
+    }
+  }  
 
   if (aDescription.IsEmpty()) {
     bool isXUL = mContent->IsXULElement();
@@ -216,7 +235,6 @@ Accessible::Description(nsString& aDescription)
       }
     }
   }
-
   if (!aDescription.IsEmpty()) {
     aDescription.CompressWhitespace();
     nsAutoString name;
@@ -225,6 +243,8 @@ Accessible::Description(nsString& aDescription)
     if (aDescription.Equals(name))
       aDescription.Truncate();
   }
+
+
 }
 
 KeyBinding
@@ -885,8 +905,20 @@ Accessible::HandleAccEvent(AccEvent* aEvent)
     }
   }
 
-  if (nsCoreUtils::AccEventObserversExist()) {
-    nsCoreUtils::DispatchAccEvent(MakeXPCEvent(aEvent));
+  nsCOMPtr<nsIObserverService> obsService = services::GetObserverService();
+  NS_ENSURE_TRUE(obsService, NS_ERROR_FAILURE);
+
+  nsCOMPtr<nsISimpleEnumerator> observers;
+  obsService->EnumerateObservers(NS_ACCESSIBLE_EVENT_TOPIC,
+                                 getter_AddRefs(observers));
+
+  NS_ENSURE_STATE(observers);
+
+  bool hasObservers = false;
+  observers->HasMoreElements(&hasObservers);
+  if (hasObservers) {
+    nsCOMPtr<nsIAccessibleEvent> event = MakeXPCEvent(aEvent);
+    return obsService->NotifyObservers(event, NS_ACCESSIBLE_EVENT_TOPIC, nullptr);
   }
 
   return NS_OK;
@@ -2236,30 +2268,6 @@ Accessible::AnchorURIAt(uint32_t aAnchorIndex)
 {
   NS_PRECONDITION(IsLink(), "AnchorURIAt is called on not hyper link!");
   return nullptr;
-}
-
-void
-Accessible::ToTextPoint(HyperTextAccessible** aContainer, int32_t* aOffset,
-                        bool aIsBefore) const
-{
-  if (IsHyperText()) {
-    *aContainer = const_cast<Accessible*>(this)->AsHyperText();
-    *aOffset = aIsBefore ? 0 : (*aContainer)->CharacterCount();
-    return;
-  }
-
-  const Accessible* child = nullptr;
-  const Accessible* parent = this;
-  do {
-    child = parent;
-    parent = parent->Parent();
-  } while (parent && !parent->IsHyperText());
-
-  if (parent) {
-    *aContainer = const_cast<Accessible*>(parent)->AsHyperText();
-    *aOffset = (*aContainer)->GetChildOffset(
-      child->IndexInParent() + static_cast<int32_t>(!aIsBefore));
-  }
 }
 
 
